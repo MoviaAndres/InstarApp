@@ -2,19 +2,19 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MinLengthValidator
 from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 
 
 class Usuario (models.Model):
 
-    nombre= models.CharField(max_length=50, validators=[MinLengthValidator(4)], unique=True)
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil")
     foto_perfil= models.ImageField(blank=True, null=True)
-    descripcion= models.CharField(max_length=500, blank=True)
-
-
+    descripcion= models.CharField(max_length=500, blank=True, null=True)
+    
     def __str__(self):
-        return self.nombre
+        return self.usuario.username
 
 class Post (models.Model):
 
