@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils import timezone
 from .models import Usuario
-from .forms import UsuarioForm
+from .forms import UsuarioForm, PerfilForm, PostForm
 # Create your views here.
 
 
@@ -56,3 +56,80 @@ def ingreso(request):
 def home(request):
     
     return render(request, 'home.html')
+
+def perfil(request, username):
+    perfil_usuario = get_object_or_404(
+        Usuario.objects.select_related("usuario"),
+        usuario__username=username
+    )
+
+    publicaciones = perfil_usuario.post_usuario.all().order_by("-id")
+
+    es_dueno = (
+        request.user.is_authenticated
+        and request.user.pk == perfil_usuario.usuario_id
+    )
+
+    contexto = {
+        "perfil": perfil_usuario,
+        "publicaciones": publicaciones,
+        "es_dueno": es_dueno,
+        "form_post": PostForm() if es_dueno else None,
+    }
+
+    return render(request, "perfil.html", contexto)
+
+
+@login_required
+def editar_perfil(request):
+    perfil_usuario = get_object_or_404(
+        Usuario,
+        usuario=request.user
+    )
+
+    if request.method == "POST":
+        form = PerfilForm(
+            request.POST,
+            request.FILES,
+            instance=perfil_usuario
+        )
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil actualizado.")
+            return redirect(
+                "perfil",
+                username=request.user.username
+            )
+    else:
+        form = PerfilForm(instance=perfil_usuario)
+
+    return render(
+        request,
+        "editar_perfil.html",
+        {"form": form}
+    )
+
+
+@login_required
+def crear_post(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            post = form.save(commit=False)
+
+            # El autor siempre es el usuario autenticado
+            post.usuario = get_object_or_404(
+                Usuario,
+                usuario=request.user
+            )
+
+            post.save()
+
+            messages.success(request, "Publicación creada.")
+
+    return redirect(
+        "perfil",
+        username=request.user.username
+    )

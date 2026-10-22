@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Usuario
+from .models import Usuario, Post
 
 
 
@@ -23,3 +23,30 @@ class UsuarioForm(UserCreationForm):
             )
 
         return usuario
+
+class PerfilForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ["foto_perfil", "descripcion"]
+
+        widgets = {
+            "descripcion": forms.Textarea(attrs={
+                "placeholder": "Cuéntanos algo sobre ti...",
+                "rows": 4,
+                "maxlength": 500,
+            }),
+        }
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ["texto", "imagen"]
+
+        widgets = {
+            "texto": forms.Textarea(attrs={
+                "placeholder": "¿Qué estás pensando?",
+                "rows": 3,
+                "maxlength": 1000,
+            }),
+        }
