@@ -223,3 +223,7 @@ __marimo__/
 # Migraciones
 
 InstarApp/migrations
+
+# Media
+
+.media/
