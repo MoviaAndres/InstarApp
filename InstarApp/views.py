@@ -7,8 +7,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils import timezone
-from .models import Usuario
-from .forms import UsuarioForm, PerfilForm, PostForm
+from .models import Usuario, Post, Comentario
+from .forms import UsuarioForm, PerfilForm, PostForm, ComentarioForm
 # Create your views here.
 
 
@@ -63,7 +63,7 @@ def perfil(request, username):
         usuario__username=username
     )
 
-    publicaciones = perfil_usuario.post_usuario.all().order_by("-id")
+    publicaciones = Post.objects.filter(usuario=perfil_usuario.id)
 
     es_dueno = (
         request.user.is_authenticated
@@ -132,4 +132,98 @@ def crear_post(request):
     return redirect(
         "perfil",
         username=request.user.username
+    )
+
+
+@login_required(login_url='login')
+def eliminar_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    usuario = get_object_or_404(Usuario, pk=post.usuario.id)
+    
+    if usuario.id != request.user.id:
+        return redirect("perfil", username=usuario)
+    
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, "Post eliminado")
+        return redirect("perfil", username=usuario)
+
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    usuario = get_object_or_404(Usuario, pk=post.usuario.id)
+
+    if (request.method == "POST") and (usuario.id != request.user.id):
+
+        if post.like.filter(pk=request.user.pk):
+            post.like.remove(usuario)
+        else:
+            post.like.add(usuario)
+
+    return redirect("perfil", username=usuario)
+
+
+
+@login_required
+def crear_post(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            post = form.save(commit=False)
+
+            # El autor siempre es el usuario autenticado
+            post.usuario = get_object_or_404(
+                Usuario,
+                usuario=request.user
+            )
+
+            post.save()
+
+            messages.success(request, "Publicación creada.")
+
+    return redirect(
+        "perfil",
+        username=request.user.username
+    )
+
+def comentarios(request,pk):
+    post = get_object_or_404(Post, pk=pk)
+    comentarios = Comentario.objects.filter(post=post.id)
+
+    usuario = request.user
+
+    contexto = {
+        "usuario": usuario,
+        "post": post,
+        "comentarios": comentarios,
+        "form_post": ComentarioForm(),
+    }
+
+    return render(request, "comentarios.html", contexto)
+
+
+@login_required
+def crear_comentario(request,pk):
+    if request.method == "POST":
+        form = ComentarioForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            comentario = form.save(commit=False)
+
+            # El autor siempre es el usuario autenticado
+            comentario.usuario = get_object_or_404(
+                Usuario,
+                usuario=request.user
+            )
+
+            comentario.post = get_object_or_404(Post,pk=pk)
+
+            comentario.save()
+
+            messages.success(request, "Comentario Publicado.")
+
+    return redirect(
+        "comentarios",
+        pk
     )

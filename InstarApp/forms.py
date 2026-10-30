@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Usuario, Post
+from .models import Usuario, Post, Comentario
 
 
 
@@ -48,5 +48,18 @@ class PostForm(forms.ModelForm):
                 "placeholder": "¿Qué estás pensando?",
                 "rows": 3,
                 "maxlength": 1000,
+            }),
+        }
+
+class ComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ["texto"]
+
+        widgets = {
+            "texto": forms.Textarea(attrs={
+                "placeholder": "Comenta",
+                "rows": 3,
+                "maxlength": 500,
             }),
         }

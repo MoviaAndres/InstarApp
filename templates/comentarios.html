@@ -1,0 +1,40 @@
+
+{% if post.imagen %}
+    <img
+        src="{{ post.imagen.url }}"
+        alt="Imagen de la publicación"
+        loading="lazy"
+    >
+{% endif %}
+
+    <p>{{ post.texto|linebreaksbr }}</p>
+
+    <p>
+    Me gusta: {{ post.like.count }}
+    </p>
+
+<section>
+    <h2>Comentar</h2>
+
+    <form
+        method="post"
+        action="{% url 'crear_comentario' post.id %}"
+        enctype="multipart/form-data"
+    >
+        {% csrf_token %}
+        {{ form_post.as_p }}
+
+        <button  type="submit">
+            Publicar
+        </button>
+    </form>
+</section>
+
+{% for comentario in comentarios %}
+    <a href="{% url 'perfil' comentario.usuario%}">{{comentario.usuario}}</a>
+    <p>{{ comentario.texto|linebreaksbr }}</p>
+
+    <p>
+    Me gusta: {{ comentario.like.count }}
+    </p>
+{%endfor%}
