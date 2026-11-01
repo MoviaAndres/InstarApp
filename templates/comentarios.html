@@ -1,4 +1,14 @@
 
+    <div>
+    {% if post.usuario.foto_perfil %}
+    <img
+        src="{{ post.usuario.foto_perfil.url }}"
+        alt="Foto de perfil"
+        loading="lazy"
+    >
+    {% endif %}
+        <a href="{% url 'perfil' post.usuario%}">{{post.usuario}}</a>
+    </div>
 {% if post.imagen %}
     <img
         src="{{ post.imagen.url }}"
@@ -31,6 +41,13 @@
 </section>
 
 {% for comentario in comentarios %}
+    {% if comentario.usuario.foto_perfil %}
+    <img
+        src="{{ comentario.usuario.foto_perfil.url }}"
+        alt="Foto de perfil"
+        loading="lazy"
+    >
+    {% endif %}
     <a href="{% url 'perfil' comentario.usuario%}">{{comentario.usuario}}</a>
     <p>{{ comentario.texto|linebreaksbr }}</p>
 
