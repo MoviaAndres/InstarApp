@@ -221,8 +221,8 @@
                     <form action="{% url 'like_post' post.pk %}" method="post">
                         {% csrf_token %}
 
-                        {% if request.user in post.like.all %}
-                        <button type="submit">Quitar like</button>
+                        {% if usuario in post.like.all %}
+                        <button type="submit">Quitar me gusta</button>
                         {% else %}
                         <button type="submit">Me gusta</button>
                         {% endif %}

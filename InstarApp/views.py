@@ -58,6 +58,9 @@ def home(request):
     return render(request, 'home.html')
 
 def perfil(request, username):
+
+    usuario_actual = get_object_or_404(Usuario,pk=request.user.id)
+
     perfil_usuario = get_object_or_404(
         Usuario.objects.select_related("usuario"),
         usuario__username=username
@@ -71,6 +74,7 @@ def perfil(request, username):
     )
 
     contexto = {
+        "usuario": usuario_actual,
         "perfil": perfil_usuario,
         "publicaciones": publicaciones,
         "es_dueno": es_dueno,
@@ -151,16 +155,17 @@ def eliminar_post(request, pk):
 @login_required
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    usuario = get_object_or_404(Usuario, pk=post.usuario.id)
+    usuario_post = get_object_or_404(Usuario, pk=post.usuario.id)
+    usuario = get_object_or_404(Usuario, pk=request.user.id)
 
-    if (request.method == "POST") and (usuario.id != request.user.id):
+    if (request.method == "POST") and (usuario_post.id != request.user.id):
 
-        if post.like.filter(pk=request.user.pk):
+        if post.like.filter(usuario_id=request.user.id):
             post.like.remove(usuario)
         else:
             post.like.add(usuario)
 
-    return redirect("perfil", username=usuario)
+    return redirect("perfil", username=usuario_post)
 
 
 
