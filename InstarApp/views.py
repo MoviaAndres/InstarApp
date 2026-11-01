@@ -167,6 +167,21 @@ def like_post(request, pk):
 
     return redirect("perfil", username=usuario_post)
 
+@login_required
+def like_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    usuario_post = get_object_or_404(Usuario, pk=comentario.usuario.id)
+    usuario = get_object_or_404(Usuario, pk=request.user.id)
+    post = get_object_or_404(Post,pk=comentario.post.id)
+
+    if (request.method == "POST") and (usuario_post.id != request.user.id):
+
+        if comentario.like.filter(usuario_id=request.user.id):
+            comentario.like.remove(usuario)
+        else:
+            comentario.like.add(usuario)
+
+    return redirect("comentarios", post.id)
 
 
 @login_required
@@ -196,10 +211,10 @@ def comentarios(request,pk):
     post = get_object_or_404(Post, pk=pk)
     comentarios = Comentario.objects.filter(post=post.id)
 
-    usuario = request.user
+    usuario_actual = get_object_or_404(Usuario,pk=request.user.id)
 
     contexto = {
-        "usuario": usuario,
+        "usuario": usuario_actual,
         "post": post,
         "comentarios": comentarios,
         "form_post": ComentarioForm(),

@@ -37,4 +37,13 @@
     <p>
     Me gusta: {{ comentario.like.count }}
     </p>
+    <form action="{% url 'like_comentario' comentario.pk %}" method="post">
+    {% csrf_token %}
+
+        {% if usuario in comentario.like.all %}
+        <button type="submit">Quitar me gusta</button>
+        {% else %}
+        <button type="submit">Me gusta</button>
+        {% endif %}
+    </form>
 {%endfor%}

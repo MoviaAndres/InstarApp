@@ -13,5 +13,6 @@ urlpatterns = [
     path("post/eliminar/<int:pk>", views.eliminar_post, name="eliminar_post"),
     path("post/like/<int:pk>", views.like_post, name="like_post"),
     path("comentarios/<int:pk>", views.comentarios, name="comentarios"),
-    path("comentar/<int:pk>", views.crear_comentario, name="crear_comentario")
+    path("comentar/<int:pk>", views.crear_comentario, name="crear_comentario"),
+    path("comentarios/like/<int:pk>", views.like_comentario, name="like_comentario"),
 ]
