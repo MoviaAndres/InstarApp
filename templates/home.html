@@ -1,14 +1,8 @@
 {% load static %}
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Instar</title>
-
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-</head>
-<body>
-    <h1>Bienvenido a Instar</h1>
-</body>
-</html>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Instar</title><link rel="stylesheet" href="{% static 'css/estilos.css' %}"></head>
+<body class="pagina-home"><header class="barra-superior"><h1>Instar</h1><nav>
+{% if user.is_authenticated %}<a href="{% url 'perfil' username=user.username %}">Mi perfil</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Cerrar sesión</button></form>
+{% else %}<a href="{% url 'login' %}">Iniciar sesión</a><a class="boton-nav" href="{% url 'crear_cuenta' %}">Crear cuenta</a>{% endif %}
+</nav></header><main class="inicio"><div class="inicio-contenido"><h2>Bienvenido a Instar</h2><p>Compartí tus publicaciones y personalizá tu perfil.</p>
+{% if user.is_authenticated %}<a class="boton-inicio" href="{% url 'perfil' username=user.username %}">Ver mi perfil</a>{% else %}<a class="boton-inicio" href="{% url 'crear_cuenta' %}">Crear cuenta</a>{% endif %}
+</div></main></body></html>

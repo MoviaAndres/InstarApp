@@ -9,6 +9,10 @@ from django.db.models import Q
 from django.utils import timezone
 from .models import Usuario, Post, Comentario
 from .forms import UsuarioForm, PerfilForm, PostForm, ComentarioForm
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
+from .models import Usuario
+from .forms import UsuarioForm, PerfilForm, PostForm
 # Create your views here.
 
 
@@ -18,7 +22,8 @@ def crear_cuenta(request):
 
         if form.is_valid():
             form.save()
-            return redirect("home")
+            messages.success(request, "Cuenta creada. Ya podés iniciar sesión.")
+            return redirect("login")
     else:
         form = UsuarioForm()
 
@@ -30,6 +35,9 @@ def crear_cuenta(request):
 
 
 def ingreso(request):
+    siguiente = request.POST.get("next", request.GET.get("next", ""))
+    if not url_has_allowed_host_and_scheme(siguiente, {request.get_host()}, require_https=request.is_secure()):
+        siguiente = ""
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -42,15 +50,21 @@ def ingreso(request):
 
         if usuario is not None:
             login(request, usuario)
-            return redirect("home")
+            return redirect(siguiente or "home")
 
         return render(
             request,
-            "login",
-            {"error": "Usuario o contraseña incorrectos."}
+            "login.html",
+            {"error": "Usuario o contraseña incorrectos.", "next": siguiente, "username": username}
         )
 
-    return render(request, "login.html")
+    return render(request, "login.html", {"next": siguiente})
+
+
+@require_POST
+def salir(request):
+    logout(request)
+    return redirect("home")
 
 
 def home(request):
@@ -97,7 +111,7 @@ def perfil(request, username):
         "perfil": perfil_usuario,
         "publicaciones": publicaciones,
         "es_dueno": es_dueno,
-        "form_post": PostForm() if es_dueno else None,
+        "form_post": (form_post if form_post is not None else PostForm()) if es_dueno else None,
     }
 
     return render(request, "perfil.html", contexto)
@@ -151,6 +165,8 @@ def crear_post(request):
             post.save()
 
             messages.success(request, "Publicación creada.")
+        else:
+            return perfil(request, request.user.username, form_post=form)
 
     return redirect(
         "perfil",
