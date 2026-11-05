@@ -106,12 +106,14 @@ def perfil(request, username, form_post=None):
         and request.user.pk == perfil_usuario.usuario_id
     )
 
+    form_post = PostForm() if es_dueno else None
+
     contexto = {
         "usuario": usuario_actual,
         "perfil": perfil_usuario,
         "publicaciones": publicaciones,
         "es_dueno": es_dueno,
-        "form_post": (form_post if form_post is not None else PostForm()) if es_dueno else None,
+        "form_post": form_post,
     }
 
     return render(request, "perfil.html", contexto)
@@ -191,7 +193,7 @@ def eliminar_post(request, pk):
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     usuario_post = get_object_or_404(Usuario, pk=post.usuario.id)
-    usuario = get_object_or_404(Usuario, pk=request.user.id)
+    usuario = request.user.perfil
 
     if (request.method == "POST") and (usuario_post.id != request.user.id):
 
@@ -227,7 +229,7 @@ def permitir_post(request, pk):
 def like_comentario(request, pk):
     comentario = get_object_or_404(Comentario, pk=pk)
     usuario_post = get_object_or_404(Usuario, pk=comentario.usuario.id)
-    usuario = get_object_or_404(Usuario, pk=request.user.id)
+    usuario = request.user.perfil
     post = get_object_or_404(Post,pk=comentario.post.id)
 
     if (request.method == "POST") and (usuario_post.id != request.user.id):

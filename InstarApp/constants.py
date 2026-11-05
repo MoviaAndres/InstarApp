@@ -8,6 +8,26 @@ def banPalabra(texto):
     "imbecil",
     "puto",
     "puta",
+    "porno",
+    "pene",
+    "nepe",
+    "teta",
+    "tetas",
+    "violacion",
+    "pornografia",
+    "morite",
+    "desvivite",
+    "violacion",
+    "pornografia",
+    "semen",
+    "xxx",
+    "pito",
+    "trolo",
+    "concha",
+    "pussy",
+    "pajero",
+    "conchudo",
+    "conchuda"
     ]
     ban = False
     for palabra in PALABRAS_BANEADAS:
@@ -21,6 +41,10 @@ def riesgoPalabra(texto):
     PALABRAS_RIESGOSAS = [
         "zorete",
         "gil",
+        "sexo",
+        "muerto",
+        "muer",
+        "pete",
     ]
     ban = False
     for palabra in PALABRAS_RIESGOSAS:
