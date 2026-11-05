@@ -106,12 +106,14 @@ def perfil(request, username):
         and request.user.pk == perfil_usuario.usuario_id
     )
 
+    form_post = PostForm() if es_dueno else None
+    
     contexto = {
         "usuario": usuario_actual,
         "perfil": perfil_usuario,
         "publicaciones": publicaciones,
         "es_dueno": es_dueno,
-        "form_post": (form_post if form_post is not None else PostForm()) if es_dueno else None,
+        "form_post": form_post,
     }
 
     return render(request, "perfil.html", contexto)
