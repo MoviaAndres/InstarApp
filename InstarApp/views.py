@@ -88,7 +88,7 @@ def moderador(request):
 
     return render(request, "moderador.html", contexto)
 
-def perfil(request, username):
+def perfil(request, username, form_post=None):
     if request.user.is_authenticated:
         usuario_actual = request.user.perfil
     else:
@@ -239,29 +239,6 @@ def like_comentario(request, pk):
 
     return redirect("comentarios", post.id)
 
-
-@login_required
-def crear_post(request):
-    if request.method == "POST":
-        form = PostForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-
-            # El autor siempre es el usuario autenticado
-            post.usuario = get_object_or_404(
-                Usuario,
-                usuario=request.user
-            )
-
-            post.save()
-
-            messages.success(request, "Publicación creada.")
-
-    return redirect(
-        "perfil",
-        username=request.user.username
-    )
 
 def comentarios(request,pk):
     post = get_object_or_404(Post, pk=pk)

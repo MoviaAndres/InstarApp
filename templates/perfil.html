@@ -15,6 +15,12 @@
 <nav class="barra-superior"><a href="{% url 'home' %}">Instar · Inicio</a></nav>
 <main class="contenedor">
 
+    {% if messages %}
+        {% for mensaje in messages %}
+            <p role="status">{{ mensaje }}</p>
+        {% endfor %}
+    {% endif %}
+
     <!-- Cabecera del perfil -->
     <section class="perfil-cabecera">
 
