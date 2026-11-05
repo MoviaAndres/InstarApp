@@ -12,9 +12,16 @@ class Usuario (models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil")
     foto_perfil= models.ImageField(blank=True, null=True)
     descripcion= models.CharField(max_length=500, blank=True, null=True)
+    advertencia = models.BooleanField(default=False)
+    moderador = models.BooleanField(default=False)
     
     def __str__(self):
         return self.usuario.username
+    
+    def advertir(self):
+        self.advertencia = True
+    def permitir(self):
+        self.advertencia = False
 
 class Post (models.Model):
 
@@ -22,6 +29,12 @@ class Post (models.Model):
     imagen= models.ImageField(blank=True, null=True)
     texto= models.CharField(max_length=1000, blank=True)
     like= models.ManyToManyField(Usuario, related_name="post_like")
+    advertencia = models.BooleanField(default=False)
+    
+    def advertir(self):
+        self.advertencia = True
+    def permitir(self):
+        self.advertencia = False
 
 class Comentario (models.Model):
 
@@ -29,4 +42,10 @@ class Comentario (models.Model):
     post= models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comentario_like")
     texto= models.CharField(max_length=500)
     like= models.ManyToManyField(Usuario)
+    advertencia = models.BooleanField(default=False)
+
+    def advertir(self):
+        self.advertencia = True
+    def permitir(self):
+        self.advertencia = False
     

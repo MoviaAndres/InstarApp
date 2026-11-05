@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils import timezone
+from .models import Usuario, Post, Comentario
+from .forms import UsuarioForm, PerfilForm, PostForm, ComentarioForm
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from .models import Usuario
@@ -69,13 +71,35 @@ def home(request):
     
     return render(request, 'home.html')
 
-def perfil(request, username, form_post=None):
+@login_required
+def moderador(request):
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return render(request, 'home.html')
+    
+    publicaciones = Post.objects.filter(advertencia=True)
+    comentarios = Comentario.objects.filter(advertencia=True)
+    usuarios = Usuario.objects.filter(advertencia=True)
+    contexto = {
+        "publicaciones": publicaciones,
+        "comentarios": comentarios,
+        "usuarios": usuarios
+    }
+
+    return render(request, "moderador.html", contexto)
+
+def perfil(request, username):
+    if request.user.is_authenticated:
+        usuario_actual = request.user.perfil
+    else:
+        usuario_actual = None
+        
     perfil_usuario = get_object_or_404(
         Usuario.objects.select_related("usuario"),
         usuario__username=username
     )
 
-    publicaciones = perfil_usuario.post_usuario.all().order_by("-id")
+    publicaciones = Post.objects.filter(usuario=perfil_usuario.id)
 
     es_dueno = (
         request.user.is_authenticated
@@ -83,6 +107,7 @@ def perfil(request, username, form_post=None):
     )
 
     contexto = {
+        "usuario": usuario_actual,
         "perfil": perfil_usuario,
         "publicaciones": publicaciones,
         "es_dueno": es_dueno,
@@ -147,3 +172,150 @@ def crear_post(request):
         "perfil",
         username=request.user.username
     )
+
+
+@login_required(login_url='login')
+def eliminar_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    usuario_post = get_object_or_404(Usuario, pk=post.usuario.id)
+    usuario = request.user.perfil
+    if (usuario_post.id != request.user.id) and not usuario.moderador:
+        return redirect("perfil", username=usuario_post)
+    
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, "Post eliminado")
+        return redirect("perfil", username=usuario_post)
+
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    usuario_post = get_object_or_404(Usuario, pk=post.usuario.id)
+    usuario = get_object_or_404(Usuario, pk=request.user.id)
+
+    if (request.method == "POST") and (usuario_post.id != request.user.id):
+
+        if post.like.filter(usuario_id=request.user.id):
+            post.like.remove(usuario)
+        else:
+            post.like.add(usuario)
+
+    return redirect("perfil", username=usuario_post)
+
+@login_required
+def like_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    usuario_post = get_object_or_404(Usuario, pk=comentario.usuario.id)
+    usuario = get_object_or_404(Usuario, pk=request.user.id)
+    post = get_object_or_404(Post,pk=comentario.post.id)
+
+    if (request.method == "POST") and (usuario_post.id != request.user.id):
+
+        if comentario.like.filter(usuario_id=request.user.id):
+            comentario.like.remove(usuario)
+        else:
+            comentario.like.add(usuario)
+
+    return redirect("comentarios", post.id)
+
+
+@login_required
+def crear_post(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            post = form.save(commit=False)
+
+            # El autor siempre es el usuario autenticado
+            post.usuario = get_object_or_404(
+                Usuario,
+                usuario=request.user
+            )
+
+            post.save()
+
+            messages.success(request, "Publicación creada.")
+
+    return redirect(
+        "perfil",
+        username=request.user.username
+    )
+
+def comentarios(request,pk):
+    post = get_object_or_404(Post, pk=pk)
+    comentarios = Comentario.objects.filter(post=post.id)
+
+    if request.user.is_authenticated:
+        usuario_actual = request.user.perfil
+    else:
+        usuario_actual = None
+
+    contexto = {
+        "usuario": usuario_actual,
+        "post": post,
+        "comentarios": comentarios,
+        "form_post": ComentarioForm(),
+    }
+
+    return render(request, "comentarios.html", contexto)
+
+
+@login_required
+def crear_comentario(request,pk):
+    if request.method == "POST":
+        form = ComentarioForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            comentario = form.save(commit=False)
+
+            # El autor siempre es el usuario autenticado
+            comentario.usuario = get_object_or_404(
+                Usuario,
+                usuario=request.user
+            )
+
+            comentario.post = get_object_or_404(Post,pk=pk)
+
+            comentario.save()
+
+            messages.success(request, "Comentario Publicado.")
+
+    return redirect(
+        "comentarios",
+        pk
+    )
+
+@login_required(login_url='login')
+def eliminar_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return redirect(
+        "home",
+        pk
+        )
+    
+    if request.method == 'POST':
+        comentario.delete()
+        messages.success(request, "Comentario eliminado")
+        return redirect(
+            "moderador"
+        )
+
+    
+@login_required(login_url='login')
+def eliminar_usuario(request, pk):
+    usuario_eliminar = get_object_or_404(Usuario, pk=pk)
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return redirect(
+        "home"
+        )
+    
+    if request.method == 'POST':
+        usuario_eliminar.delete()
+        messages.success(request, "Post eliminado")
+        return redirect(
+            "moderador"
+        )

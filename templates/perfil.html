@@ -15,12 +15,6 @@
 <nav class="barra-superior"><a href="{% url 'home' %}">Instar · Inicio</a></nav>
 <main class="contenedor">
 
-    {% if messages %}
-        {% for mensaje in messages %}
-            <p>{{ mensaje }}</p>
-        {% endfor %}
-    {% endif %}
-
     <!-- Cabecera del perfil -->
     <section class="perfil-cabecera">
 
@@ -98,6 +92,33 @@
                         </p>
                     </div>
 
+                {% if es_dueno %}
+                    <form action="{% url 'eliminar_post' post.pk %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                        <button type="submit" class="{{ estilos.boton_eliminar }}"
+                            onclick="return confirm('eliminar post?');">
+                            Eliminar post
+                        </button>
+                    </form>
+                {% endif %}
+                <a class="boton" href="{% url 'comentarios' post.pk %}">
+                Comentar
+                </a>
+
+                <a class="boton" href="{% url 'comentarios' post.pk %}">
+                Ver comentarios
+                </a>
+                {% if not es_dueno %}
+                    <form action="{% url 'like_post' post.pk %}" method="post">
+                        {% csrf_token %}
+
+                        {% if usuario in post.like.all %}
+                        <button type="submit">Quitar me gusta</button>
+                        {% else %}
+                        <button type="submit">Me gusta</button>
+                        {% endif %}
+                    </form>
+                {% endif %}
                 </article>
             {% empty %}
                 <p>Este usuario todavía no tiene publicaciones.</p>
