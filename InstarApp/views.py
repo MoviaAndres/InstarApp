@@ -186,6 +186,27 @@ def like_post(request, pk):
 
     return redirect("perfil", username=usuario_post)
 
+
+@login_required(login_url='login')
+def advertir_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.advertir()
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@login_required(login_url='login')
+def permitir_post(request, pk):
+    
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return redirect("home")
+    
+    post = get_object_or_404(Post, pk=pk)
+    post.permitir()
+
+    return redirect("moderador")
+
+
 @login_required
 def like_comentario(request, pk):
     comentario = get_object_or_404(Comentario, pk=pk)
@@ -287,7 +308,26 @@ def eliminar_comentario(request, pk):
             "moderador"
         )
 
+
+@login_required(login_url='login')
+def advertir_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    comentario.advertir()
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@login_required(login_url='login')
+def permitir_comentario(request, pk):
     
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return redirect("home")
+    
+    comentario = get_object_or_404(Comentario, pk=pk)
+    comentario.permitir()
+
+    return redirect("moderador")
+
 @login_required(login_url='login')
 def eliminar_usuario(request, pk):
     usuario_eliminar = get_object_or_404(Usuario, pk=pk)
@@ -303,3 +343,23 @@ def eliminar_usuario(request, pk):
         return redirect(
             "moderador"
         )
+
+
+@login_required(login_url='login')
+def advertir_usuario(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    usuario.advertir()
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@login_required(login_url='login')
+def permitir_usuario(request, pk):
+    
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return redirect("home")
+    
+    usuario = get_object_or_404(Usuario, pk=pk)
+    usuario.permitir()
+
+    return redirect("moderador")

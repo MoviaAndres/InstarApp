@@ -6,7 +6,6 @@ def banPalabra(texto):
 
     PALABRAS_BANEADAS = [
     "imbecil",
-    "imbécil",
     "puto",
     "puta",
     ]
