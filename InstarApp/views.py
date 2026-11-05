@@ -57,10 +57,29 @@ def home(request):
     
     return render(request, 'home.html')
 
+@login_required
+def moderador(request):
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return render(request, 'home.html')
+    
+    publicaciones = Post.objects.filter(advertencia=True)
+    comentarios = Comentario.objects.filter(advertencia=True)
+    usuarios = Usuario.objects.filter(advertencia=True)
+    contexto = {
+        "publicaciones": publicaciones,
+        "comentarios": comentarios,
+        "usuarios": usuarios
+    }
+
+    return render(request, "moderador.html", contexto)
+
 def perfil(request, username):
-
-    usuario_actual = get_object_or_404(Usuario,pk=request.user.id)
-
+    if request.user.is_authenticated:
+        usuario_actual = request.user.perfil
+    else:
+        usuario_actual = None
+        
     perfil_usuario = get_object_or_404(
         Usuario.objects.select_related("usuario"),
         usuario__username=username
@@ -142,15 +161,15 @@ def crear_post(request):
 @login_required(login_url='login')
 def eliminar_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    usuario = get_object_or_404(Usuario, pk=post.usuario.id)
-    
-    if usuario.id != request.user.id:
-        return redirect("perfil", username=usuario)
+    usuario_post = get_object_or_404(Usuario, pk=post.usuario.id)
+    usuario = request.user.perfil
+    if (usuario_post.id != request.user.id) and not usuario.moderador:
+        return redirect("perfil", username=usuario_post)
     
     if request.method == 'POST':
         post.delete()
         messages.success(request, "Post eliminado")
-        return redirect("perfil", username=usuario)
+        return redirect("perfil", username=usuario_post)
 
 @login_required
 def like_post(request, pk):
@@ -211,7 +230,10 @@ def comentarios(request,pk):
     post = get_object_or_404(Post, pk=pk)
     comentarios = Comentario.objects.filter(post=post.id)
 
-    usuario_actual = get_object_or_404(Usuario,pk=request.user.id)
+    if request.user.is_authenticated:
+        usuario_actual = request.user.perfil
+    else:
+        usuario_actual = None
 
     contexto = {
         "usuario": usuario_actual,
@@ -247,3 +269,37 @@ def crear_comentario(request,pk):
         "comentarios",
         pk
     )
+
+@login_required(login_url='login')
+def eliminar_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return redirect(
+        "home",
+        pk
+        )
+    
+    if request.method == 'POST':
+        comentario.delete()
+        messages.success(request, "Comentario eliminado")
+        return redirect(
+            "moderador"
+        )
+
+    
+@login_required(login_url='login')
+def eliminar_usuario(request, pk):
+    usuario_eliminar = get_object_or_404(Usuario, pk=pk)
+    usuario = request.user.perfil
+    if not usuario.moderador:
+        return redirect(
+        "home"
+        )
+    
+    if request.method == 'POST':
+        usuario_eliminar.delete()
+        messages.success(request, "Post eliminado")
+        return redirect(
+            "moderador"
+        )

@@ -1,0 +1,81 @@
+
+{% for post in publicaciones %}
+
+    {% if post.imagen %}
+        <img
+            src="{{ post.imagen.url }}"
+            alt="Imagen de la publicación"
+            loading="lazy"
+        >
+    {% endif %}
+    <div class="texto-post">
+        <p>{{ post.texto|linebreaksbr }}</p>
+
+        <p>
+            Me gusta: {{ post.like.count }}
+        </p>
+    </div>
+
+    <form action="{% url 'eliminar_post' post.pk %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="{{ estilos.boton_eliminar }}"
+        onclick="return confirm('eliminar post?');">
+            Eliminar post
+        </button>
+    </form>
+
+{%endfor%}
+
+{% for comentario in comentarios %}
+    {% if comentario.usuario.foto_perfil %}
+    <img
+        style="
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #ddd;
+        "
+        src="{{ comentario.usuario.foto_perfil.url }}"
+        alt="Foto de perfil"
+        loading="lazy"
+    >
+    {% endif %}
+    <a href="{% url 'perfil' comentario.usuario%}">{{comentario.usuario}}</a>
+    <p>{{ comentario.texto|linebreaksbr }}</p>
+
+    <p>
+    Me gusta: {{ comentario.like.count }}
+    </p>
+    <form action="{% url 'eliminar_comentario' comentario.pk %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="{{ estilos.boton_eliminar }}"
+        onclick="return confirm('eliminar comentario?');">
+            Eliminar comentario
+        </button>
+    </form>
+{%endfor%}
+{% for usuario in usuarios %}
+    {% if comentario.usuario.foto_perfil %}
+    <img
+        style="
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #ddd;
+        "
+        src="{{ comentario.usuario.foto_perfil.url }}"
+        alt="Foto de perfil"
+        loading="lazy"
+    >
+    {% endif %}
+    <a href="{% url 'perfil' comentario.usuario%}">{{usuario}}</a>
+    <form action="{% url 'eliminar_usuario' usuario.pk %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="{{ estilos.boton_eliminar }}"
+        onclick="return confirm('eliminar usuario?');">
+            Eliminar usuario
+        </button>
+    </form>
+{%endfor%}
