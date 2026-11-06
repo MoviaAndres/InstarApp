@@ -162,6 +162,22 @@ def editar_perfil(request):
         {"form": form}
     )
 
+@login_required
+def seguir_perfil(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    usuario_actual = request.user
+
+    if request.method == "POST" and usuario != usuario_actual.perfil:
+        if usuario.seguidores.filter(pk=request.user.pk).exists():
+            usuario.seguidores.remove(usuario_actual)
+        else:
+            usuario.seguidores.add(usuario_actual)
+
+    # Solo se admite este destino conocido; nunca una URL recibida del cliente.
+    if request.method == "POST" and request.POST.get("next") == "home":
+        return redirect("home")
+
+    return redirect("perfil", username=usuario.usuario.username)
 
 @login_required
 def crear_post(request):
@@ -192,15 +208,13 @@ def crear_post(request):
 @login_required(login_url='login')
 def eliminar_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    usuario_post = get_object_or_404(Usuario, pk=post.usuario.id)
     usuario = request.user.perfil
-    if (usuario_post.id != request.user.id) and not usuario.moderador:
-        return redirect("perfil", username=usuario_post)
-    
+    if post.usuario != usuario and not usuario.moderador:
+        return redirect("home")
     if request.method == 'POST':
         post.delete()
         messages.success(request, "Post eliminado")
-        return redirect("perfil", username=usuario_post)
+        return redirect("perfil", username=post.usuario.usuario.username)
 
 @login_required
 def like_post(request, pk):

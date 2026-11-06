@@ -12,6 +12,7 @@ urlpatterns = [
     path("perfil/eliminar/<int:pk>",views.eliminar_usuario, name ="eliminar_usuario"),
     path("perfil/advertir/<int:pk>", views.advertir_usuario, name="advertir_usuario"),
     path("perfil/permitir/<int:pk>", views.permitir_usuario, name="permitir_usuario"),
+    path("perfil/seguir/<int:pk>", views.seguir_perfil, name="seguir_perfil"),
     path("post/crear/", views.crear_post, name="crear_post"),
     path("post/eliminar/<int:pk>", views.eliminar_post, name="eliminar_post"),
     path("post/advertir/<int:pk>", views.advertir_post, name="advertir_post"),

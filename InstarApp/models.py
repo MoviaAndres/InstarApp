@@ -14,6 +14,7 @@ class Usuario (models.Model):
     descripcion= models.CharField(max_length=500, blank=True, null=True)
     advertencia = models.BooleanField(default=False)
     moderador = models.BooleanField(default=False)
+    seguidores = models.ManyToManyField(User, related_name="seguidores")
     
     def __str__(self):
         return self.usuario.username

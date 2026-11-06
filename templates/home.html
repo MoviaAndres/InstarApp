@@ -56,24 +56,28 @@
                         {% if post.texto %}
                             <p class="contenido-publicacion">{{ post.texto|linebreaksbr }}</p>
                         {% endif %}
-                        <p>Me gusta: {{ post.like.all|length }}</p>
                     </div>
 
-                    <footer class="acciones-publicacion">
-                        {% if user.is_authenticated and usuario %}
-                            <form action="{% url 'like_post' post.pk %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="home">
-                                {% if usuario in post.like.all %}
-                                    <button type="submit" aria-label="Quitar me gusta a la publicación de {{ post.usuario.usuario.username }}" aria-pressed="true">Quitar me gusta</button>
-                                {% else %}
-                                    <button type="submit" aria-label="Me gusta la publicación de {{ post.usuario.usuario.username }}" aria-pressed="false">Me gusta</button>
-                                {% endif %}
-                            </form>
-                        {% elif not user.is_authenticated %}
-                            <a class="boton boton-like-inicio" href="{% url 'login' %}?next={% url 'home' %}" aria-label="Iniciar sesión para dar me gusta a la publicación de {{ post.usuario.usuario.username }}">Me gusta</a>
+                    <div class= "contenedor-acciones">
+                        <form action="{% url 'like_post' post.pk %}" method="post">
+                        {% csrf_token %}
+
+                        {% if usuario in post.like.all %}
+                            <button type="submit">Quitar me gusta {{ post.like.count }}</button>
+                        {% else %}
+                            <button type="submit">Me gusta {{ post.like.count }}</button>
                         {% endif %}
-                        <a class="boton" href="{% url 'comentarios' post.pk %}" aria-label="Ver comentarios de la publicación de {{ post.usuario.usuario.username }}">Ver comentarios</a>
+                        </form>
+                        <a class="boton" href="{% url 'comentarios' post.pk %}">
+                        Comentar
+                        </a>
+
+                        <form action="{% url 'advertir_post' post.pk %}" method="post">
+                        {% csrf_token %}
+
+                            <button class= "boton-advertir" type="submit">Denunciar</button>
+                        </form>
+                    </div>
                     </footer>
                 </article>
             {% empty %}
