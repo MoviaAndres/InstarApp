@@ -1,39 +1,85 @@
 {% load static %}
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Instar</title><link rel="stylesheet" href="{% static 'css/estilos.css' %}"></head>
-<body class="pagina-home"><header class="barra-superior"><h1>Instar</h1><nav>
-{% if user.is_authenticated %}<a href="{% url 'perfil' username=user.username %}">Mi perfil</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Cerrar sesión</button></form>
-{% else %}<a href="{% url 'login' %}">Iniciar sesión</a><a class="boton-nav" href="{% url 'crear_cuenta' %}">Crear cuenta</a>{% endif %}
-</nav></header>
-<main class="inicio">
-    <div class="inicio-contenido"><h2>Bienvenido a Instar</h2><p>Compartí tus publicaciones y personalizá tu perfil.</p>
-{% if user.is_authenticated %}
-    <div class="contenedor">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inicio · Instar</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body class="pagina-home">
+    <header class="barra-superior">
+        <h1>Instar</h1>
+        <nav aria-label="Navegación principal">
+            {% if user.is_authenticated %}
+                <a href="{% url 'perfil' username=user.username %}">Mi perfil</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+                <a class="boton-nav" href="{% url 'crear_cuenta' %}">Crear cuenta</a>
+            {% endif %}
+        </nav>
+    </header>
 
-    {% for post in publicaciones %}
+    <main class="contenedor inicio-publicaciones">
+        <header class="cabecera-inicio">
+            <h2>Inicio</h2>
+            <p>Las últimas publicaciones de la comunidad.</p>
+        </header>
 
-        {% if post.imagen %}
-            <img
-            src="{{ post.imagen.url }}"
-            alt="Imagen de la publicación"
-            loading="lazy"
-            >
-        {% endif %}
-        <div class="texto-post">
-            <p>{{ post.texto|linebreaksbr }}</p>
+        {% for mensaje in messages %}
+            <p role="status">{{ mensaje }}</p>
+        {% endfor %}
 
-            <p>
-                Me gusta: {{ post.like.count }}
-            </p>
+        <div class="publicaciones publicaciones-inicio">
+            {% for post in publicaciones %}
+                <article class="publicacion publicacion-inicio">
+                    <header class="autor-publicacion">
+                        <a class="enlace-autor" href="{% url 'perfil' username=post.usuario.usuario.username %}">
+                            {% if post.usuario.foto_perfil %}
+                                <img class="avatar-publicacion" src="{{ post.usuario.foto_perfil.url }}" alt="" loading="lazy" width="44" height="44">
+                            {% else %}
+                                <span class="avatar-publicacion avatar-sin-foto" aria-hidden="true"></span>
+                            {% endif %}
+                            <span>@{{ post.usuario.usuario.username }}</span>
+                        </a>
+                    </header>
+
+                    {% if post.imagen %}
+                        <img src="{{ post.imagen.url }}" alt="Imagen de la publicación de {{ post.usuario.usuario.username }}" loading="lazy">
+                    {% endif %}
+
+                    <div class="texto-post">
+                        {% if post.texto %}
+                            <p class="contenido-publicacion">{{ post.texto|linebreaksbr }}</p>
+                        {% endif %}
+                        <p>Me gusta: {{ post.like.all|length }}</p>
+                    </div>
+
+                    <footer class="acciones-publicacion">
+                        {% if user.is_authenticated and usuario %}
+                            <form action="{% url 'like_post' post.pk %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="home">
+                                {% if usuario in post.like.all %}
+                                    <button type="submit" aria-label="Quitar me gusta a la publicación de {{ post.usuario.usuario.username }}" aria-pressed="true">Quitar me gusta</button>
+                                {% else %}
+                                    <button type="submit" aria-label="Me gusta la publicación de {{ post.usuario.usuario.username }}" aria-pressed="false">Me gusta</button>
+                                {% endif %}
+                            </form>
+                        {% elif not user.is_authenticated %}
+                            <a class="boton boton-like-inicio" href="{% url 'login' %}?next={% url 'home' %}" aria-label="Iniciar sesión para dar me gusta a la publicación de {{ post.usuario.usuario.username }}">Me gusta</a>
+                        {% endif %}
+                        <a class="boton" href="{% url 'comentarios' post.pk %}" aria-label="Ver comentarios de la publicación de {{ post.usuario.usuario.username }}">Ver comentarios</a>
+                    </footer>
+                </article>
+            {% empty %}
+                <p class="inicio-vacio">{% if user.is_authenticated %}Todavía no hay publicaciones de otros usuarios.{% else %}Todavía no hay publicaciones.{% endif %}</p>
+            {% endfor %}
         </div>
-
-        <div class= "contenedor-acciones">
-        </div>
-    {%endfor%}
-    </div>
-{% else %}
-    <a class="boton-inicio" href="{% url 'crear_cuenta' %}">Crear cuenta</a>
-{% endif %}
-</div>
-</main>
-
-</body></html>
+    </main>
+</body>
+</html>
