@@ -1,18 +1,56 @@
-/* INSTAR · CSS compartido. Íconos SVG locales, sin dependencias externas. */
+/* INSTAR · Tema terracota, oliva y crema.
+   Archivo organizado por secciones para encontrar cada título y botón.
+   Colores centralizados en la sección 01. */
+
+/* ÍNDICE — Buscá el número o el título para ubicar cada bloque.
+   01. PALETA DE COLORES
+   02. ESTILOS GENERALES DE LA PÁGINA
+   03. CAMPOS DE LOS FORMULARIOS
+   04. AYUDA, ERRORES Y MENSAJES
+   05. ESTILO GENERAL DE LOS BOTONES
+   06. ÍCONOS DE LOS BOTONES Y TÍTULOS
+   07. BARRA SUPERIOR Y NAVEGACIÓN
+   08. FONDO Y TÍTULO DE LA BIENVENIDA
+   09. BOTÓN DE INICIO
+   10. INICIAR SESIÓN, REGISTRO Y EDITAR PERFIL
+   11. PERFIL: CONTENEDOR, FOTO Y DATOS
+   12. FORMULARIO PARA CREAR UNA PUBLICACIÓN
+   13. PUBLICACIONES: TÍTULO, TARJETAS Y COMENTARIOS
+   14. BOTÓN ME GUSTA
+   15. BOTÓN ELIMINAR
+   16. PÁGINAS DE COMENTARIOS Y MODERACIÓN
+   17. ADAPTACIÓN GENERAL PARA CELULARES
+   18. ACCESIBILIDAD: REDUCIR ANIMACIONES
+   19. INICIO: LISTADO DE PUBLICACIONES DE LA COMUNIDAD
+   20. ADAPTACIÓN DEL INICIO PARA CELULARES
+   Se modifica aquí el color, sin cambiar las plantillas ni la lógica.
+*/
+
+
+/* ============================================================
+   01. PALETA DE COLORES
+   Cambiá estos valores para modificar el color de toda la página.
+   --primario: botones y enlaces. --fondo: fondo de la página.
+   --cabecera: barra superior. --blanco: tarjetas.
+   --like-*: botones me gusta. --peligro y --error-*: eliminar y errores.
+   --violeta: alias de compatibilidad; usa el nuevo color primario.
+   ============================================================ */
+
+
 :root {
     color-scheme: light;
-    --primario: #4c51d9;
-    --primario-hover: #3e40b6;
-    --violeta: #6b46d9;
-    --fondo: #f5f4fa;
+    --primario: #9a4cd9;
+    --primario-hover: #903eb6;
+    --violeta: #c194d7;
+    --fondo: #dad4f7;
     --blanco: #fff;
-    --texto: #252137;
-    --texto-secundario: #686277;
+    --texto: #403c50;
+    --texto-secundario: #424049;
     --borde: #e4e0ee;
     --suave: #eeebfa;
     --peligro: #ad2940;
     --radio: 22px;
-    --sombra: 0 12px 40px rgb(45 28 89 / 5%);
+    --sombra: 0 12px 40px rgba(3, 2, 3, 0.05);
 }
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; min-height: 100vh; background: var(--fondo); color: var(--texto); font: 15px/1.6 "Segoe UI", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -64,7 +102,7 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .boton-principal { width: 100%; margin-top: 6px; }
 
 /* Los íconos son decorativos: se conservan todos los textos de las acciones. */
-.barra-superior h1::before, .barra-superior > a::before, .inicio-contenido h2::before,
+.inicio-contenido h2::before,
 .tarjeta-login h1::before, .formulario-post h2::before, .contenedor > section:last-child > h2::before,
 .barra-superior nav a::before, .boton-inicio::before, .boton::before, button::before {
     content: ""; display: inline-block; width: 19px; height: 19px; flex: 0 0 19px; vertical-align: -3px;
@@ -72,8 +110,8 @@ button:disabled { cursor: not-allowed; opacity: .55; }
     -webkit-mask: var(--icono, url("../icons/arrow-right.svg")) center / contain no-repeat;
     mask: var(--icono, url("../icons/arrow-right.svg")) center / contain no-repeat;
 }
-.barra-superior h1, .barra-superior > a { --icono: url("../icons/star.svg"); }
-.barra-superior h1::before, .barra-superior > a::before { width: 26px; height: 26px; margin-right: 10px; }
+/* Logo de la app: SVG insertado en las cabeceras de inicio y perfil. */
+.barra-superior .logo-app { display: inline-block; width: 26px; height: 26px; margin-right: 10px; vertical-align: -4px; }
 a[href*="perfil/"] { --icono: url("../icons/user.svg"); }
 a[href*="perfil/editar/"] { --icono: url("../icons/edit.svg"); }
 a[href*="inicio_ss"], form:has(input[name="password"]) button { --icono: url("../icons/log-in.svg"); }
