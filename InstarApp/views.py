@@ -90,7 +90,7 @@ def moderador(request):
 
 def perfil(request, username):
     if request.user.is_authenticated:
-        usuario_actual = request.user.perfil
+        usuario_actual = getattr(request.user, "perfil", None)
     else:
         usuario_actual = None
         
@@ -232,12 +232,11 @@ def like_comentario(request, pk):
     usuario = request.user.perfil
     post = get_object_or_404(Post,pk=comentario.post.id)
 
-    if (request.method == "POST") and (usuario_post.id != request.user.id):
 
-        if comentario.like.filter(usuario_id=request.user.id):
-            comentario.like.remove(usuario)
-        else:
-            comentario.like.add(usuario)
+    if comentario.like.filter(usuario_id=request.user.id):
+        comentario.like.remove(usuario)
+    else:
+        comentario.like.add(usuario)
 
     return redirect("comentarios", post.id)
 
@@ -270,7 +269,7 @@ def comentarios(request,pk):
     comentarios = Comentario.objects.filter(post=post.id)
 
     if request.user.is_authenticated:
-        usuario_actual = request.user.perfil
+        usuario_actual = getattr(request.user, "perfil", None)
     else:
         usuario_actual = None
 
