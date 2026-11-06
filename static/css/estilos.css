@@ -188,3 +188,28 @@ form[action*="/eliminar/"] button:hover { border-color: #dfadb9; background: #fc
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Inicio: publicaciones de otros usuarios con el mismo estilo del perfil. */
+.inicio-publicaciones { max-width: 700px; }
+.cabecera-inicio { margin-bottom: 26px; }
+.cabecera-inicio h2 { margin-bottom: 8px; font-size: 30px; }
+.cabecera-inicio p { margin: 0; color: var(--texto-secundario); }
+.publicaciones-inicio { grid-template-columns: minmax(0, 1fr); }
+.autor-publicacion { padding: 18px 20px; }
+.enlace-autor { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--texto); font-weight: 650; }
+.enlace-autor > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.avatar-publicacion { display: block; width: 44px; height: 44px; flex: 0 0 44px; border: 1px solid var(--borde); border-radius: 50%; background: var(--suave); object-fit: cover; }
+.avatar-sin-foto { background: var(--suave) url("../icons/avatar.svg") center / 65% no-repeat; }
+.publicacion-inicio > img { max-height: 620px; }
+.publicacion-inicio .texto-post .contenido-publicacion { color: var(--texto); font-size: 15px; white-space: normal; }
+.acciones-publicacion { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 0 20px; padding-top: 14px; border-top: 1px solid var(--borde); }
+.acciones-publicacion .boton, .acciones-publicacion button { padding: 9px 13px; font-size: 13px; }
+.acciones-publicacion .boton { background: var(--suave); color: #59428f; }
+.acciones-publicacion .boton:hover { background: #e4def6; }
+.acciones-publicacion button[aria-pressed="true"] { border-color: #d7b6cc; background: #f9eaf2; color: #983368; }
+.boton-like-inicio { --icono: url("../icons/heart.svg"); }
+@media (max-width: 640px) {
+    .cabecera-inicio h2 { font-size: 27px; }
+    .autor-publicacion { padding: 16px; }
+    .acciones-publicacion { margin-inline: 16px; }
+}

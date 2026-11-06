@@ -68,8 +68,21 @@ def salir(request):
 
 
 def home(request):
-    
-    return render(request, 'home.html')
+    publicaciones = (
+        Post.objects.select_related("usuario__usuario")
+        .prefetch_related("like")
+        .order_by("-pk")
+    )
+    usuario_actual = None
+
+    if request.user.is_authenticated:
+        publicaciones = publicaciones.exclude(usuario__usuario=request.user)
+        usuario_actual = Usuario.objects.filter(usuario=request.user).first()
+
+    return render(request, "home.html", {
+        "publicaciones": publicaciones,
+        "usuario": usuario_actual,
+    })
 
 @login_required
 def moderador(request):
@@ -191,18 +204,20 @@ def eliminar_post(request, pk):
 
 @login_required
 def like_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    usuario_post = get_object_or_404(Usuario, pk=post.usuario.id)
+    post = get_object_or_404(Post.objects.select_related("usuario__usuario"), pk=pk)
     usuario = request.user.perfil
 
-    if (request.method == "POST") and (usuario_post.id != request.user.id):
-
-        if post.like.filter(usuario_id=request.user.id):
+    if request.method == "POST" and post.usuario.usuario_id != request.user.pk:
+        if post.like.filter(pk=usuario.pk).exists():
             post.like.remove(usuario)
         else:
             post.like.add(usuario)
 
-    return redirect("perfil", username=usuario_post)
+    # Solo se admite este destino conocido; nunca una URL recibida del cliente.
+    if request.method == "POST" and request.POST.get("next") == "home":
+        return redirect("home")
+
+    return redirect("perfil", username=post.usuario.usuario.username)
 
 
 @login_required(login_url='login')
@@ -229,14 +244,15 @@ def permitir_post(request, pk):
 def like_comentario(request, pk):
     comentario = get_object_or_404(Comentario, pk=pk)
     usuario_post = get_object_or_404(Usuario, pk=comentario.usuario.id)
-    usuario = request.user.perfil
+    if request.user.perfil:
+        usuario = request.user.perfil
+    else:
+        usuario = None
     post = get_object_or_404(Post,pk=comentario.post.id)
 
-    if (request.method == "POST") and (usuario_post.id != request.user.id):
-
-        if comentario.like.filter(usuario_id=request.user.id):
+    if comentario.like.filter(usuario_id=request.user.id):
             comentario.like.remove(usuario)
-        else:
+    else:
             comentario.like.add(usuario)
 
     return redirect("comentarios", post.id)
