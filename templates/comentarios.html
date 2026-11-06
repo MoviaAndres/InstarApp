@@ -1,3 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comentarios · Instar</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body class="pagina-comentarios">
+<main class="contenedor">
 
     <div>
     {% if post.usuario.foto_perfil %}
@@ -78,3 +89,6 @@
         {% endif %}
     </form>
 {%endfor%}
+</main>
+</body>
+</html>
