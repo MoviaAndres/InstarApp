@@ -27,6 +27,7 @@
         </p>
     </div>
 
+<div class= "contenedor-acciones">
     <form action="{% url 'eliminar_post' post.pk %}" method="post" class="d-inline">
         {% csrf_token %}
         <button type="submit" class="{{ estilos.boton_eliminar }}"
@@ -34,6 +35,14 @@
             Eliminar post
         </button>
     </form>
+    <form action="{% url 'permitir_post' post.pk %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit"
+        onclick="return confirm('permitir post?');">
+            Permitir Post
+        </button>
+    </form>
+</div>
 
 {%endfor%}
 
@@ -58,6 +67,7 @@
     <p>
     Me gusta: {{ comentario.like.count }}
     </p>
+<div class= "contenedor-acciones">
     <form action="{% url 'eliminar_comentario' comentario.pk %}" method="post" class="d-inline">
         {% csrf_token %}
         <button type="submit" class="{{ estilos.boton_eliminar }}"
@@ -65,6 +75,14 @@
             Eliminar comentario
         </button>
     </form>
+    <form action="{% url 'permitir_comentario' comentario.pk %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit"
+        onclick="return confirm('permitir comentario?');">
+            Permitir Comenentario
+        </button>
+    </form>
+</div>
 {%endfor%}
 {% for usuario in usuarios %}
     {% if comentario.usuario.foto_perfil %}
@@ -82,6 +100,7 @@
     >
     {% endif %}
     <a href="{% url 'perfil' comentario.usuario%}">{{usuario}}</a>
+<div class= "contenedor-acciones">
     <form action="{% url 'eliminar_usuario' usuario.pk %}" method="post" class="d-inline">
         {% csrf_token %}
         <button type="submit" class="{{ estilos.boton_eliminar }}"
@@ -89,6 +108,14 @@
             Eliminar usuario
         </button>
     </form>
+    <form action="{% url 'permitir_usuario' usuario.pk %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit"
+        onclick="return confirm('permitir usuario?');">
+            Permitir Usuario
+        </button>
+    </form>
+</div>
 {%endfor%}
 </main>
 </body>

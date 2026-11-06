@@ -68,8 +68,16 @@ def salir(request):
 
 
 def home(request):
-    
-    return render(request, 'home.html')
+    publicaciones = Post.objects.exclude(usuario=request.user.perfil).order_by("-id")
+    comentarios = Comentario.objects.all()
+    usuarios = Usuario.objects.all()
+    contexto = {
+        "publicaciones": publicaciones,
+        "comentarios": comentarios,
+        "usuarios": usuarios
+    }
+
+    return render(request, "home.html", contexto)
 
 @login_required
 def moderador(request):

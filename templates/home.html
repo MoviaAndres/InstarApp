@@ -3,6 +3,37 @@
 <body class="pagina-home"><header class="barra-superior"><h1>Instar</h1><nav>
 {% if user.is_authenticated %}<a href="{% url 'perfil' username=user.username %}">Mi perfil</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Cerrar sesión</button></form>
 {% else %}<a href="{% url 'login' %}">Iniciar sesión</a><a class="boton-nav" href="{% url 'crear_cuenta' %}">Crear cuenta</a>{% endif %}
-</nav></header><main class="inicio"><div class="inicio-contenido"><h2>Bienvenido a Instar</h2><p>Compartí tus publicaciones y personalizá tu perfil.</p>
-{% if user.is_authenticated %}<a class="boton-inicio" href="{% url 'perfil' username=user.username %}">Ver mi perfil</a>{% else %}<a class="boton-inicio" href="{% url 'crear_cuenta' %}">Crear cuenta</a>{% endif %}
-</div></main></body></html>
+</nav></header>
+<main class="inicio">
+    <div class="inicio-contenido"><h2>Bienvenido a Instar</h2><p>Compartí tus publicaciones y personalizá tu perfil.</p>
+{% if user.is_authenticated %}
+    <div class="contenedor">
+
+    {% for post in publicaciones %}
+
+        {% if post.imagen %}
+            <img
+            src="{{ post.imagen.url }}"
+            alt="Imagen de la publicación"
+            loading="lazy"
+            >
+        {% endif %}
+        <div class="texto-post">
+            <p>{{ post.texto|linebreaksbr }}</p>
+
+            <p>
+                Me gusta: {{ post.like.count }}
+            </p>
+        </div>
+
+        <div class= "contenedor-acciones">
+        </div>
+    {%endfor%}
+    </div>
+{% else %}
+    <a class="boton-inicio" href="{% url 'crear_cuenta' %}">Crear cuenta</a>
+{% endif %}
+</div>
+</main>
+
+</body></html>

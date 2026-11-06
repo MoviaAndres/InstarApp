@@ -8,7 +8,12 @@
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
 </head>
 <body class="pagina-comentarios">
+<header class="barra-superior"><a href="{% url 'home' %}">Instar · Inicio</a><nav>
+{% if user.is_authenticated %}<a href="{% url 'perfil' username=user.username %}">Mi perfil</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Cerrar sesión</button></form>
+{% else %}<a href="{% url 'login' %}">Iniciar sesión</a><a class="boton-nav" href="{% url 'crear_cuenta' %}">Crear cuenta</a>{% endif %}
+</nav></header>
 <main class="contenedor">
+
 
     <div>
     {% if post.usuario.foto_perfil %}
@@ -37,9 +42,22 @@
 
     <p>{{ post.texto|linebreaksbr }}</p>
 
-    <p>
-    Me gusta: {{ post.like.count }}
-    </p>
+    <div class= "contenedor-acciones">
+    <form action="{% url 'like_post' post.pk %}" method="post">
+    {% csrf_token %}
+
+        {% if usuario in post.like.all %}
+        <button type="submit">Quitar me gusta {{ post.like.count }}</button>
+        {% else %}
+        <button type="submit">Me gusta {{ post.like.count }}</button>
+        {% endif %}
+    </form>
+    <form action="{% url 'advertir_post' post.pk %}" method="post">
+    {% csrf_token %}
+
+        <button class= "boton-advertir" type="submit">Denunciar</button>
+    </form>
+    </div>
 
 <section>
     <h2>Comentar</h2>
@@ -76,18 +94,22 @@
     <a href="{% url 'perfil' comentario.usuario%}">{{comentario.usuario}}</a>
     <p>{{ comentario.texto|linebreaksbr }}</p>
 
-    <p>
-    Me gusta: {{ comentario.like.count }}
-    </p>
+    <div class= "contenedor-acciones">
     <form action="{% url 'like_comentario' comentario.pk %}" method="post">
     {% csrf_token %}
 
         {% if usuario in comentario.like.all %}
-        <button type="submit">Quitar me gusta</button>
+        <button type="submit">Quitar me gusta {{ comentario.like.count }}</button>
         {% else %}
-        <button type="submit">Me gusta</button>
+        <button type="submit">Me gusta {{ comentario.like.count }}</button>
         {% endif %}
     </form>
+    <form action="{% url 'advertir_comentario' comentario.pk %}" method="post">
+    {% csrf_token %}
+
+        <button class= "boton-advertir" type="submit">Denunciar</button>
+    </form>
+    </div>
 {%endfor%}
 </main>
 </body>

@@ -40,7 +40,10 @@ class PerfilForm(forms.ModelForm):
     def clean_descripcion(self):
         texto = self.cleaned_data.get("descripcion", "")
 
-        texto_minusculas = texto.lower()
+        if not texto == None:
+            texto_minusculas = texto.lower()
+        else:
+            texto_minusculas = ""
 
         if banPalabra(texto_minusculas):
             raise ValidationError(
@@ -66,7 +69,10 @@ class PostForm(forms.ModelForm):
     def clean_texto(self):
         texto = self.cleaned_data.get("texto", "")
 
-        texto_minusculas = texto.lower()
+        if not texto == None:
+            texto_minusculas = texto.lower()
+        else:
+            texto_minusculas = ""
 
         if banPalabra(texto_minusculas):
             raise ValidationError(
@@ -89,9 +95,11 @@ class ComentarioForm(forms.ModelForm):
             }),
         }
     def clean_texto(self):
-        texto = self.cleaned_data.get("texto", "")
-
-        texto_minusculas = texto.lower()
+        texto = self.cleaned_data.get("texto") or ""
+        if not texto == None:
+            texto_minusculas = texto.lower()
+        else:
+            texto_minusculas = ""
 
         if banPalabra(texto_minusculas):
             raise ValidationError(

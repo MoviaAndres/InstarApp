@@ -20,8 +20,10 @@ class Usuario (models.Model):
     
     def advertir(self):
         self.advertencia = True
+        self.save()
     def permitir(self):
         self.advertencia = False
+        self.save()
 
 class Post (models.Model):
 
@@ -33,8 +35,10 @@ class Post (models.Model):
     
     def advertir(self):
         self.advertencia = True
+        self.save()
     def permitir(self):
         self.advertencia = False
+        self.save()
 
 class Comentario (models.Model):
 
@@ -46,6 +50,8 @@ class Comentario (models.Model):
 
     def advertir(self):
         self.advertencia = True
+        self.save()
     def permitir(self):
         self.advertencia = False
+        self.save()
     
