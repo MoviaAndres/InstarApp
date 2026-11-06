@@ -103,7 +103,7 @@ def moderador(request):
 
 def perfil(request, username, form_post=None):
     if request.user.is_authenticated:
-        usuario_actual = request.user.perfil
+        usuario_actual = getattr(request.user, "perfil", None)
     else:
         usuario_actual = None
         
@@ -263,7 +263,7 @@ def comentarios(request,pk):
     comentarios = Comentario.objects.filter(post=post.id)
 
     if request.user.is_authenticated:
-        usuario_actual = request.user.perfil
+        usuario_actual = getattr(request.user, "perfil", None)
     else:
         usuario_actual = None
 
