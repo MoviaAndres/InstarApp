@@ -52,11 +52,19 @@
         <button type="submit">Me gusta {{ post.like.count }}</button>
         {% endif %}
     </form>
+    {% if not request.user == post.usuario.usuario %}
     <form action="{% url 'reportar_post' post.pk %}" method="post">
     {% csrf_token %}
 
-        <button class= "boton-advertir" type="submit">Reportar</button>
+        <button class= "boton-advertir" type="submit"> Reportar </button>
     </form>
+    {% else %}
+    <form action="{% url 'eliminar_post' post.pk %}" method="post">
+    {% csrf_token %}
+
+        <button class= "boton-advertir" type="submit"> Eliminar </button>
+    </form>
+    {%endif%}
     </div>
 
 <section>
@@ -105,11 +113,19 @@
             <button type="submit">Me gusta {{ comentario.like.count }}</button>
             {% endif %}
         </form>
+        {% if not request.user == comentario.usuario.usuario %}
         <form action="{% url 'reportar_comentario' comentario.pk %}" method="post">
         {% csrf_token %}
 
-            <button class= "boton-advertir" type="submit">Reportar</button>
+            <button class= "boton-eliminar" type="submit">Reportar</button>
         </form>
+        {% else %}
+        <form action="{% url 'eliminar_comentario' comentario.pk %}" method="post">
+        {% csrf_token %}
+
+        <button class= "boton-elimnar" type="submit"> Eliminar </button>
+        </form>
+        {% endif%}
         </div>
     {% endif %}
 {%endfor%}

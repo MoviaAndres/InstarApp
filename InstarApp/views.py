@@ -336,17 +336,18 @@ def crear_comentario(request,pk):
 def eliminar_comentario(request, pk):
     comentario = get_object_or_404(Comentario, pk=pk)
     usuario = request.user.perfil
-    if not usuario.moderador:
+    if not usuario.moderador or comentario.usuario != usuario:
         return redirect(
         "home",
         pk
         )
-    
+    post = comentario.post
     if request.method == 'POST':
         comentario.delete()
         messages.success(request, "Comentario eliminado")
         return redirect(
-            "moderador"
+            "comentarios",
+            post.id
         )
 
 
