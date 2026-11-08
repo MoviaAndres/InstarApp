@@ -15,6 +15,7 @@ class Usuario (models.Model):
     advertencia = models.BooleanField(default=False)
     moderador = models.BooleanField(default=False)
     seguidores = models.ManyToManyField(User, related_name="seguidores")
+    bloqueados = models.ManyToManyField(User, related_name="bloqueados")
     
     def __str__(self):
         return self.usuario.username

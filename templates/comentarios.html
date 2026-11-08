@@ -52,10 +52,10 @@
         <button type="submit">Me gusta {{ post.like.count }}</button>
         {% endif %}
     </form>
-    <form action="{% url 'advertir_post' post.pk %}" method="post">
+    <form action="{% url 'reportar_post' post.pk %}" method="post">
     {% csrf_token %}
 
-        <button class= "boton-advertir" type="submit">Denunciar</button>
+        <button class= "boton-advertir" type="submit">Reportar</button>
     </form>
     </div>
 
@@ -77,39 +77,41 @@
 </section>
 
 {% for comentario in comentarios %}
-    {% if comentario.usuario.foto_perfil %}
-    <img
-        style="
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        background: #ddd;
-        "
-        src="{{ comentario.usuario.foto_perfil.url }}"
-        alt="Foto de perfil"
-        loading="lazy"
-    >
-    {% endif %}
-    <a href="{% url 'perfil' comentario.usuario%}">{{comentario.usuario}}</a>
-    <p>{{ comentario.texto|linebreaksbr }}</p>
-
-    <div class= "contenedor-acciones">
-    <form action="{% url 'like_comentario' comentario.pk %}" method="post">
-    {% csrf_token %}
-
-        {% if usuario in comentario.like.all %}
-        <button type="submit">Quitar me gusta {{ comentario.like.count }}</button>
-        {% else %}
-        <button type="submit">Me gusta {{ comentario.like.count }}</button>
+    {% if not comentario.usuario in request.user.perfil.bloqueados.all%}
+        {% if comentario.usuario.foto_perfil %}
+        <img
+            style="
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ddd;
+            "
+            src="{{ comentario.usuario.foto_perfil.url }}"
+            alt="Foto de perfil"
+            loading="lazy"
+        >
         {% endif %}
-    </form>
-    <form action="{% url 'advertir_comentario' comentario.pk %}" method="post">
-    {% csrf_token %}
+        <a href="{% url 'perfil' comentario.usuario%}">{{comentario.usuario}}</a>
+        <p>{{ comentario.texto|linebreaksbr }}</p>
 
-        <button class= "boton-advertir" type="submit">Denunciar</button>
-    </form>
-    </div>
+        <div class= "contenedor-acciones">
+        <form action="{% url 'like_comentario' comentario.pk %}" method="post">
+        {% csrf_token %}
+
+            {% if usuario in comentario.like.all %}
+            <button type="submit">Quitar me gusta {{ comentario.like.count }}</button>
+            {% else %}
+            <button type="submit">Me gusta {{ comentario.like.count }}</button>
+            {% endif %}
+        </form>
+        <form action="{% url 'reportar_comentario' comentario.pk %}" method="post">
+        {% csrf_token %}
+
+            <button class= "boton-advertir" type="submit">Reportar</button>
+        </form>
+        </div>
+    {% endif %}
 {%endfor%}
 </main>
 </body>

@@ -47,6 +47,7 @@
                 {{ perfil.descripcion|default:"Sin descripción todavía." }}
             </p>
 
+            <div class= "contenedor-acciones">
             <p>
                 Publicaciones: {{ publicaciones.count }}
             </p>
@@ -64,12 +65,25 @@
                 <form action="{% url 'seguir_perfil' perfil.pk %}" method="post">
                     {% csrf_token %}
                     {% if request.user in perfil.seguidores.all %}
-                    <button type="submit">dejar de seguir {{ perfil.seguidores.count }}</button>
+                    <button type="submit"> Dejar de seguir {{ perfil.seguidores.count }}</button>
                     {% else %}
-                    <button type="submit">seguir {{ perfil.seguidores.count }}</button>
+                    <button type="submit"> Seguir {{ perfil.seguidores.count }}</button>
+                    {% endif %}
+                </form>
+                <form action="{% url 'reportar_usuario' perfil.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit"> Reportar </button>
+                </form>
+                <form action="{% url 'bloquear_perfil' perfil.pk %}" method="post">
+                    {% csrf_token %}
+                    {% if perfil.usuario in request.user.perfil.bloqueados.all %}
+                    <button type="submit"> Dejar de bloquear</button>
+                    {% else %}
+                    <button type="submit"> Bloquear </button>
                     {% endif %}
                 </form>
             {% endif %}
+            </div>
         </div>
 
     </section>
@@ -128,7 +142,7 @@
                     </form>
                 {% endif %}
 
-                <a class="boton" href="{% url 'comentarios' post.pk %}">
+                <a style={"margin-left: 20px"} class="boton" href="{% url 'comentarios' post.pk %}">
                 Ver comentarios
                 </a>
                 {% if not es_dueno %}

@@ -180,6 +180,23 @@ def seguir_perfil(request, pk):
     return redirect("perfil", username=usuario.usuario.username)
 
 @login_required
+def bloquear_perfil(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    usuario_actual = request.user
+
+    if request.method == "POST" and usuario != usuario_actual.perfil:
+        if usuario_actual.perfil.bloqueados.filter(pk=usuario.pk).exists():
+            usuario_actual.perfil.bloqueados.remove(usuario.usuario)
+        else:
+            usuario_actual.perfil.bloqueados.add(usuario.usuario)
+
+    # Solo se admite este destino conocido; nunca una URL recibida del cliente.
+    if request.method == "POST" and request.POST.get("next") == "home":
+        return redirect("home")
+
+    return redirect("perfil", username=usuario.usuario.username)
+
+@login_required
 def crear_post(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
@@ -235,7 +252,7 @@ def like_post(request, pk):
 
 
 @login_required(login_url='login')
-def advertir_post(request, pk):
+def reportar_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.advertir()
 
@@ -257,7 +274,6 @@ def permitir_post(request, pk):
 @login_required
 def like_comentario(request, pk):
     comentario = get_object_or_404(Comentario, pk=pk)
-    usuario_post = get_object_or_404(Usuario, pk=comentario.usuario.id)
     if request.user.perfil:
         usuario = request.user.perfil
     else:
@@ -335,7 +351,7 @@ def eliminar_comentario(request, pk):
 
 
 @login_required(login_url='login')
-def advertir_comentario(request, pk):
+def reportar_comentario(request, pk):
     comentario = get_object_or_404(Comentario, pk=pk)
     comentario.advertir()
 
@@ -371,7 +387,7 @@ def eliminar_usuario(request, pk):
 
 
 @login_required(login_url='login')
-def advertir_usuario(request, pk):
+def reportar_usuario(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
     usuario.advertir()
 

@@ -42,6 +42,7 @@
 
         <div class="publicaciones publicaciones-inicio">
             {% for post in publicaciones %}
+            {% if not post.usuario.usuario in request.user.perfil.bloqueados.all %}
                 <article class="publicacion publicacion-inicio">
                     <header class="autor-publicacion">
                         <a class="enlace-autor" href="{% url 'perfil' username=post.usuario.usuario.username %}">
@@ -78,16 +79,17 @@
                         Comentar
                         </a>
 
-                        <form action="{% url 'advertir_post' post.pk %}" method="post">
+                        <form action="{% url 'reportar_post' post.pk %}" method="post">
                         {% csrf_token %}
 
-                            <button class= "boton-advertir" type="submit">Denunciar</button>
+                            <button class= "boton-advertir" type="submit">Reportar</button>
                         </form>
                     </div>
                     </footer>
                 </article>
-            {% empty %}
-                <p class="inicio-vacio">{% if user.is_authenticated %}Todavía no hay publicaciones de otros usuarios.{% else %}Todavía no hay publicaciones.{% endif %}</p>
+            {% endif %}
+                {% empty %}
+                    <p class="inicio-vacio">{% if user.is_authenticated %}Todavía no hay publicaciones de otros usuarios.{% else %}Todavía no hay publicaciones.{% endif %}</p>
             {% endfor %}
         </div>
     </main>
