@@ -17,8 +17,6 @@ def banPalabra(texto):
     "pornografia",
     "morite",
     "desvivite",
-    "violacion",
-    "pornografia",
     "semen",
     "xxx",
     "pito",
@@ -31,6 +29,35 @@ def banPalabra(texto):
     "chupame",
     "chupa me",
     "chupa mie",
+    "boludo",
+    "pelotudo",
+    "idiota",
+    "estupido",
+    "tarado",
+    "forro",
+    "concha de tu madre",
+    "puto",
+    "puta",
+    "putita",
+    "malparido",
+    "bastardo",
+    "fracasado",
+    "retrasado",
+    "mogolico",
+    "cagon",
+    "verga",
+    "pija",
+    "concha",
+    "culo",
+    "pajero",
+    "cornudo",
+    "sorete",
+    "escoria",
+    "lacra",
+    "maldito",
+    "degenerado",
+    "pito",
+    "trolo",
     ]
     ban = False
     for palabra in PALABRAS_BANEADAS:
@@ -42,13 +69,22 @@ def banPalabra(texto):
 def riesgoPalabra(texto):
 
     PALABRAS_RIESGOSAS = [
+    "cagada",
+    "salame",
+    "enfermo",
+    "asqueroso",
+    "rata",
+    "perra",
+    "zorra",
         "zorete",
         "gil",
         "sexo",
         "muerto",
         "muer",
         "pete",
-        "chupa"
+        "chupa",
+        "basura",
+        "inutil",
     ]
     ban = False
     for palabra in PALABRAS_RIESGOSAS:

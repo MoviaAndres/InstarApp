@@ -42,6 +42,7 @@
 
         <div class="publicaciones publicaciones-inicio">
             {% for post in publicaciones %}
+            {% if not post.usuario.privado or request.user in post.usuario.seguidores.all%}
             {% if not request.user in post.usuario.bloqueados.all %}
                 <article class="publicacion publicacion-inicio">
                     <header class="autor-publicacion">
@@ -87,6 +88,7 @@
                     </div>
                     </footer>
                 </article>
+            {% endif %}
             {% endif %}
                 {% empty %}
                     <p class="inicio-vacio">{% if user.is_authenticated %}Todavía no hay publicaciones de otros usuarios.{% else %}Todavía no hay publicaciones.{% endif %}</p>
