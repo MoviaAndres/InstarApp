@@ -10,6 +10,7 @@ urlpatterns = [
     path('buscar/', views.buscar_perfiles, name="buscar_perfiles"),
     path("perfil/editar/", views.editar_perfil, name="editar_perfil"),
     path("perfil/<str:username>/", views.perfil, name="perfil"),
+    path("perfil/privar/<str:perfil>", views.privar_perfil, name="privar_perfil"),
     path("perfil/eliminar/<int:pk>",views.eliminar_usuario, name ="eliminar_usuario"),
     path("perfil/reportar/<int:pk>", views.reportar_usuario, name="reportar_usuario"),
     path("perfil/permitir/<int:pk>", views.permitir_usuario, name="permitir_usuario"),

@@ -172,6 +172,14 @@ def perfil(request, username, form_post=None):
 
     return render(request, "perfil.html", contexto)
 
+@login_required
+def privar_perfil(request,perfil):
+
+    if request.method == "POST":
+        if perfil == request.user.username:
+            request.user.perfil.privar()
+
+    return redirect("perfil", username=request.user.username)
 
 @login_required
 def editar_perfil(request):

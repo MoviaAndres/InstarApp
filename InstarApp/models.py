@@ -16,6 +16,7 @@ class Usuario (models.Model):
     moderador = models.BooleanField(default=False)
     seguidores = models.ManyToManyField(User, related_name="seguidores")
     bloqueados = models.ManyToManyField(User, related_name="bloqueados")
+    privado = models.BooleanField(default=False)
     
     def __str__(self):
         return self.usuario.username
@@ -25,6 +26,12 @@ class Usuario (models.Model):
         self.save()
     def permitir(self):
         self.advertencia = False
+        self.save()
+    def privar(self):
+        if self.privado:
+            self.privado = False
+        else:
+            self.privado = True
         self.save()
 
 class Post (models.Model):
