@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Inicio · Instar</title>
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=logo-meteoro-2">
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=acciones-1">
 </head>
 <body class="pagina-home">
     <header class="barra-superior">
@@ -17,6 +17,7 @@
   <path d="m7.5 7.5 3 3M16 7.5l2 2M7.5 17l2 2"/>
 </svg> Instar</h1>
         <nav aria-label="Navegación principal">
+            <a class="enlace-busqueda" href="{% url 'buscar_perfiles' %}">Buscar perfiles</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'perfil' username=user.username %}">Mi perfil</a>
                 <form method="post" action="{% url 'logout' %}">

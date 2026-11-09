@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models import Q
+from django.core.paginator import Paginator
+from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from .models import Usuario, Post, Comentario
 from .forms import UsuarioForm, PerfilForm, PostForm, ComentarioForm
@@ -65,6 +66,42 @@ def ingreso(request):
 def salir(request):
     logout(request)
     return redirect("home")
+
+
+def buscar_perfiles(request):
+    """Busca perfiles por usuario o nombre, sin modificar datos."""
+    consulta = request.GET.get("q", "").strip()[:150]
+    termino = consulta.removeprefix("@").strip()
+    perfiles = Usuario.objects.none()
+
+    if termino:
+        perfiles = Usuario.objects.select_related("usuario").filter(usuario__is_active=True)
+        # Cada palabra puede coincidir con el usuario, el nombre o el apellido.
+        for palabra in termino.split():
+            perfiles = perfiles.filter(
+                Q(usuario__username__icontains=palabra)
+                | Q(usuario__first_name__icontains=palabra)
+                | Q(usuario__last_name__icontains=palabra)
+            )
+
+        if request.user.is_authenticated:
+            perfiles = perfiles.exclude(bloqueados=request.user)
+            usuario_actual = Usuario.objects.filter(usuario=request.user).first()
+            if usuario_actual is not None:
+                # Los bloqueados por vos siguen apareciendo para poder gestionarlos.
+                perfiles = perfiles.annotate(
+                    bloqueado_por_mi=Exists(
+                        usuario_actual.bloqueados.filter(pk=OuterRef("usuario_id"))
+                    )
+                )
+
+        perfiles = perfiles.order_by("usuario__username", "pk")
+
+    pagina = Paginator(perfiles, 12).get_page(request.GET.get("page"))
+    return render(request, "buscar_perfiles.html", {
+        "consulta": consulta,
+        "perfiles": pagina,
+    })
 
 
 def home(request):
@@ -193,7 +230,7 @@ def bloquear_perfil(request, pk):
     usuario_actual = request.user
 
     if request.method == "POST" and usuario != usuario_actual.perfil:
-        if usuario_actual.perfil.bloqueados.filter(pk=usuario.pk).exists():
+        if usuario_actual.perfil.bloqueados.filter(pk=usuario.usuario_id).exists():
             usuario_actual.perfil.bloqueados.remove(usuario.usuario)
         else:
             usuario_actual.perfil.bloqueados.add(usuario.usuario)

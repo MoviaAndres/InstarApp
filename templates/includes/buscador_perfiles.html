@@ -1,0 +1,10 @@
+<section class="busqueda-panel" aria-label="Buscar perfiles">
+    <form action="{% url 'buscar_perfiles' %}" method="get" role="search" aria-label="Buscar perfiles">
+        <label for="busqueda-perfiles">Buscar perfiles</label>
+        <div class="busqueda-controles">
+            <input type="search" id="busqueda-perfiles" name="q" value="{{ consulta|default:'' }}" placeholder="@usuario o nombre" maxlength="150" aria-describedby="busqueda-ayuda">
+            <button type="submit">Buscar</button>
+        </div>
+        <p id="busqueda-ayuda" class="busqueda-ayuda">Escribí el usuario completo o una parte de su nombre.</p>
+    </form>
+</section>

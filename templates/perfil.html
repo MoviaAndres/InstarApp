@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Perfil de {{ perfil.usuario.username }}</title>
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=logo-meteoro-2">
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=acciones-1">
 
 
 </head>
@@ -18,7 +18,7 @@
   <path d="m12 3 .6 1.5 1.4.5-1.4.6L12 7l-.6-1.4-1.4-.6 1.4-.5Z"/>
   <path d="m3.8 11 .5 1.4 1.4.6-1.4.5-.5 1.4-.6-1.4-1.4-.5 1.4-.6Z"/>
   <path d="m7.5 7.5 3 3M16 7.5l2 2M7.5 17l2 2"/>
-</svg> Instar · Inicio</a></nav>
+</svg> Instar</a><a class="enlace-busqueda" href="{% url 'buscar_perfiles' %}">Buscar perfiles</a></nav>
 <main class="contenedor">
 
     {% if messages %}
@@ -76,9 +76,9 @@
                 <form action="{% url 'seguir_perfil' perfil.pk %}" method="post">
                     {% csrf_token %}
                     {% if request.user in perfil.seguidores.all %}
-                    <button type="submit"> Dejar de seguir {{ perfil.seguidores.count }}</button>
+                    <button type="submit" aria-pressed="true"> Dejar de seguir {{ perfil.seguidores.count }}</button>
                     {% else %}
-                    <button type="submit"> Seguir {{ perfil.seguidores.count }}</button>
+                    <button type="submit" aria-pressed="false"> Seguir {{ perfil.seguidores.count }}</button>
                     {% endif %}
                 </form>
                 <form action="{% url 'reportar_usuario' perfil.pk %}" method="post">
@@ -88,9 +88,9 @@
                 <form action="{% url 'bloquear_perfil' perfil.pk %}" method="post">
                     {% csrf_token %}
                     {% if perfil.usuario in request.user.perfil.bloqueados.all %}
-                    <button class= "boton-advertir" type="submit"> Dejar de bloquear</button>
+                    <button class= "boton-advertir" type="submit" aria-pressed="true"> Dejar de bloquear</button>
                     {% else %}
-                    <button class= "boton-advertir" type="submit"> Bloquear </button>
+                    <button class= "boton-advertir" type="submit" aria-pressed="false"> Bloquear </button>
                     {% endif %}
                 </form>
             {% endif %}

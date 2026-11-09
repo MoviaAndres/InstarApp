@@ -7,6 +7,7 @@ urlpatterns = [
     path('inicio_ss', views.ingreso, name="login"),
     path('crear_ss', views.crear_cuenta, name="crear_cuenta"),
     path('', views.home, name="home"),
+    path('buscar/', views.buscar_perfiles, name="buscar_perfiles"),
     path("perfil/editar/", views.editar_perfil, name="editar_perfil"),
     path("perfil/<str:username>/", views.perfil, name="perfil"),
     path("perfil/privar/<str:perfil>", views.privar_perfil, name="privar_perfil"),
