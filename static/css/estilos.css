@@ -23,6 +23,9 @@
    18. ACCESIBILIDAD: REDUCIR ANIMACIONES
    19. INICIO: LISTADO DE PUBLICACIONES DE LA COMUNIDAD
    20. ADAPTACIÓN DEL INICIO PARA CELULARES
+   21. BÚSQUEDA DE PERFILES
+   22. AJUSTES PARA CELULARES Y TABLETS
+   23. ACCIONES: SEGUIR, REPORTAR Y BLOQUEAR
    Se modifica aquí el color, sin cambiar las plantillas ni la lógica.
 */
 
@@ -49,6 +52,17 @@
     --borde: #e4e0ee;
     --suave: #eeebfa;
     --peligro: #ad2940;
+    /* Colores de las tres acciones del perfil. */
+    --seguir: #176b53;
+    --seguir-hover: #10503d;
+    --seguir-activo: #e0f2e9;
+    --seguir-activo-hover: #cce8da;
+    --reportar-fondo: #fff0c2;
+    --reportar-hover: #f8dfa0;
+    --reportar-texto: #754707;
+    --reportar-borde: #dfb75e;
+    --bloquear: #a3324b;
+    --bloquear-hover: #802238;
     --radio: 22px;
     --sombra: 0 12px 40px rgba(3, 2, 3, 0.05);
 }
@@ -271,3 +285,210 @@ form[action*="/eliminar/"] button:hover { border-color: #dfadb9; background: #fc
 .contenedor-acciones form {
     margin-inline: 20px;
 }
+/* ============================================================
+   21. BÚSQUEDA DE PERFILES
+   Formulario, resultados y paginación. Usa la paleta existente.
+   ============================================================ */
+
+.barra-superior .enlace-busqueda {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--texto-secundario);
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.contenedor-busqueda { max-width: 760px; }
+.cabecera-busqueda { margin-bottom: 26px; }
+.cabecera-busqueda h1 { margin-bottom: 10px; font-size: clamp(26px, 5vw, 34px); }
+.cabecera-busqueda p, .busqueda-resumen { color: var(--texto-secundario); }
+.busqueda-panel {
+    margin-bottom: 30px;
+    padding: 24px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background: var(--blanco);
+    box-shadow: var(--sombra);
+}
+.busqueda-panel label { font-size: 18px; font-weight: 700; }
+.busqueda-controles { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+.busqueda-controles button { min-height: 44px; padding: 12px 18px; }
+.busqueda-panel .busqueda-ayuda { margin: 10px 0 0; color: var(--texto-secundario); font-size: 13px; }
+.lista-perfiles { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.resultado-perfil {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--borde);
+    border-radius: 18px;
+    background: var(--blanco);
+}
+.resultado-info { min-width: 0; overflow-wrap: anywhere; }
+.resultado-nombre { color: var(--texto); font-size: 18px; font-weight: 700; }
+.resultado-info p { margin: 4px 0 0; font-size: 14px; }
+.resultado-descripcion { color: var(--texto-secundario); }
+.resultado-bloqueado { color: var(--peligro); font-weight: 650; }
+.resultado-enlace { min-height: 44px; padding: 10px 14px; }
+.busqueda-vacia { padding: 24px; border: 1px dashed var(--borde); border-radius: 18px; color: var(--texto-secundario); }
+.busqueda-vacia p:last-child { margin-bottom: 0; }
+.paginacion-busqueda { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 26px; }
+.paginacion-busqueda .boton { min-height: 44px; padding: 10px 14px; }
+
+@media (max-width: 480px) {
+    .busqueda-panel { padding: 18px; }
+    .busqueda-controles { grid-template-columns: minmax(0, 1fr); }
+    .resultado-perfil { grid-template-columns: auto minmax(0, 1fr); gap: 12px; padding: 16px; }
+    .resultado-enlace { grid-column: 1 / -1; }
+}
+
+/* ============================================================
+   22. AJUSTES PARA CELULARES Y TABLETS
+   Hasta 1024 px: acciones flexibles. Hasta 768 px: diseño móvil.
+   Se usan los mismos colores y se conservan todas las acciones.
+   ============================================================ */
+
+@media (max-width: 1024px) {
+    /* Las acciones pueden bajar a otra fila sin salirse de la tarjeta. */
+    .contenedor-acciones { flex-wrap: wrap; }
+    .contenedor-acciones form { min-width: 0; margin-inline: 0; }
+    .informacion .contenedor-acciones > p { flex-basis: 100%; margin: 0; }
+}
+
+@media (max-width: 768px) {
+    /* Cabecera: marca arriba y navegación con espacio para tocar. */
+    .barra-superior {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .barra-superior h1, .barra-superior > a:not(.enlace-busqueda) {
+        max-width: 100%;
+        font-size: 24px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .barra-superior nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .barra-superior nav > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .barra-superior nav > *, .barra-superior nav form button { width: 100%; min-width: 0; }
+    .barra-superior nav a { justify-content: center; padding: 10px 8px; font-size: 14px; }
+    .barra-superior > .enlace-busqueda { justify-content: center; }
+
+    /* Contenido y tarjetas: una columna y márgenes pequeños. */
+    .contenedor { width: calc(100% - 32px); margin: 24px auto 40px; }
+    .publicaciones { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .perfil-cabecera, .informacion, .formulario-post, .publicacion, .tarjeta-login {
+        min-width: 0;
+        max-width: 100%;
+    }
+    .perfil-cabecera { flex-direction: column; align-items: stretch; gap: 18px; padding: 20px; }
+    .foto-perfil { width: 88px; height: 88px; align-self: flex-start; }
+    .informacion h1 { font-size: clamp(24px, 5vw, 28px); }
+    .formulario-post { padding: 20px; }
+    .formulario-post h2, .pagina-comentarios h2 { font-size: 21px; }
+    .texto-post { padding: 16px 16px 4px; }
+    .cabecera-inicio { margin-bottom: 20px; }
+    .cabecera-inicio h2 { font-size: 26px; }
+
+    /* Controles de al menos 44 px y texto que se puede partir. */
+    button, .boton, .boton-principal, .boton-nav, .boton-inicio, .boton-advertir {
+        min-width: 0;
+        max-width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: 15px;
+        line-height: 1.35;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .contenedor-acciones { gap: 8px; max-width: 100%; padding: 12px 0; }
+    .contenedor-acciones form, .contenedor-acciones > .boton {
+        flex: 1 1 150px;
+        min-width: 0;
+        margin: 0;
+    }
+    .contenedor-acciones form button { width: 100%; }
+    .publicacion > .contenedor-acciones { margin: 0; padding: 12px 14px; border-bottom: 0; }
+    .publicacion > form { display: block; margin: 8px 14px; }
+    .publicacion > form button { width: 100%; }
+    .publicacion > .boton { display: flex; width: calc(100% - 28px); margin: 8px 14px; }
+    .acciones-publicacion > form, .acciones-publicacion > .boton { flex: 1 1 150px; min-width: 0; }
+    .acciones-publicacion form button { width: 100%; }
+
+    /* Formularios legibles: 16 px evita el zoom automático al escribir. */
+    input:not([type="hidden"]), textarea, select { font-size: 16px; }
+    .pagina-login { padding: 24px 16px; }
+    .tarjeta-login { padding: 26px 20px; }
+    .tarjeta-login h1 { font-size: 26px; }
+    .pagina-comentarios .contenedor, .pagina-moderador .contenedor { padding: 20px 16px; }
+    .pagina-comentarios .contenedor > div:first-child { gap: 12px; }
+    .pagina-comentarios .contenedor > div:first-child > img {
+        width: 56px !important;
+        height: 56px !important;
+        flex: 0 0 56px;
+    }
+    .pagina-comentarios .contenedor > div:first-child > a { min-width: 0; font-size: 18px; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 360px) {
+    .barra-superior { padding-inline: 12px; }
+    .contenedor { width: calc(100% - 24px); }
+    .perfil-cabecera, .formulario-post { padding: 16px; }
+    .busqueda-panel { padding: 16px; }
+}
+
+/* ============================================================
+   23. ACCIONES: SEGUIR, REPORTAR Y BLOQUEAR
+   Los selectores por acción se aplican al perfil, inicio y comentarios.
+   Los archivos SVG se encuentran en static/icons/.
+   ============================================================ */
+
+/* Seguir: persona con +; persona con tilde cuando ya la seguís. */
+form[action*="/seguir/"] button {
+    --icono: url("../icons/user-plus.svg");
+    background: var(--seguir);
+    color: white;
+    border-color: var(--seguir);
+}
+form[action*="/seguir/"] button:hover { background: var(--seguir-hover); border-color: var(--seguir-hover); box-shadow: none; }
+form[action*="/seguir/"] button[aria-pressed="true"] {
+    --icono: url("../icons/user-check.svg");
+    background: var(--seguir-activo);
+    color: var(--seguir);
+    border-color: var(--seguir);
+}
+form[action*="/seguir/"] button[aria-pressed="true"]:hover { background: var(--seguir-activo-hover); }
+form[action*="/seguir/"] button:focus-visible { outline-color: var(--seguir); }
+
+/* Reportar: bandera y ámbar, diferente de la acción de bloquear. */
+form[action*="/reportar/"] button {
+    --icono: url("../icons/flag.svg");
+    background: var(--reportar-fondo);
+    color: var(--reportar-texto);
+    border-color: var(--reportar-borde);
+}
+form[action*="/reportar/"] button:hover { background: var(--reportar-hover); color: var(--reportar-texto); box-shadow: none; }
+form[action*="/reportar/"] button:focus-visible { outline-color: var(--reportar-texto); }
+
+/* Bloquear: círculo de prohibición y rojo oscuro. */
+form[action*="/bloquear/"] button {
+    --icono: url("../icons/ban.svg");
+    background: var(--bloquear);
+    color: white;
+    border-color: var(--bloquear);
+}
+form[action*="/bloquear/"] button:hover { background: var(--bloquear-hover); border-color: var(--bloquear-hover); box-shadow: none; }
+form[action*="/bloquear/"] button:focus-visible { outline-color: var(--bloquear); }

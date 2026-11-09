@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buscar perfiles · Instar</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=movil-1">
+</head>
+<body class="pagina-busqueda">
+    <header class="barra-superior">
+        <a href="{% url 'home' %}"><svg class="logo-app" width="26" height="26" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m15.5 10.5 1.7 4.2 4.3 1.8-4.3 1.8-1.7 4.2-1.8-4.2-4.2-1.8 4.2-1.8Z"/>
+  <path d="m4.2 1.5.7 1.9 1.9.8-1.9.7-.7 1.9-.8-1.9-1.9-.7 1.9-.8Z"/>
+  <path d="m12 3 .6 1.5 1.4.5-1.4.6L12 7l-.6-1.4-1.4-.6 1.4-.5Z"/>
+  <path d="m3.8 11 .5 1.4 1.4.6-1.4.5-.5 1.4-.6-1.4-1.4-.5 1.4-.6Z"/>
+  <path d="m7.5 7.5 3 3M16 7.5l2 2M7.5 17l2 2"/>
+</svg> Instar</a>
+        <nav aria-label="Navegación principal">
+            <a class="enlace-busqueda" aria-current="page" href="{% url 'buscar_perfiles' %}">Buscar perfiles</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'perfil' username=user.username %}">Mi perfil</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+                <a class="boton-nav" href="{% url 'crear_cuenta' %}">Crear cuenta</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="contenedor contenedor-busqueda">
+        <header class="cabecera-busqueda">
+            <h1>Encontrá otros perfiles</h1>
+            <p>Buscá personas y descubrí lo que comparten.</p>
+        </header>
+
+        {% include "includes/buscador_perfiles.html" %}
+
+        <section aria-labelledby="titulo-resultados">
+            <h2 id="titulo-resultados">{% if consulta %}Resultados de búsqueda{% else %}Empezá una búsqueda{% endif %}</h2>
+            {% if consulta %}
+                {% if perfiles.paginator.count %}
+                    <p class="busqueda-resumen" role="status">{{ perfiles.paginator.count }} perfil{{ perfiles.paginator.count|pluralize:"es" }} encontrado{{ perfiles.paginator.count|pluralize }} para “{{ consulta }}”.</p>
+                    <ul class="lista-perfiles">
+                        {% for resultado in perfiles %}
+                            <li class="resultado-perfil">
+                                {% if resultado.foto_perfil %}
+                                    <img class="avatar-publicacion" src="{{ resultado.foto_perfil.url }}" alt="" loading="lazy" width="44" height="44">
+                                {% else %}
+                                    <span class="avatar-publicacion avatar-sin-foto" aria-hidden="true"></span>
+                                {% endif %}
+                                <div class="resultado-info">
+                                    <a class="resultado-nombre" href="{% url 'perfil' username=resultado.usuario.username %}">@{{ resultado.usuario.username }}</a>
+                                    {% if resultado.bloqueado_por_mi %}<p class="resultado-bloqueado">Bloqueado por vos</p>{% endif %}
+                                    {% if resultado.usuario.get_full_name %}<p>{{ resultado.usuario.get_full_name }}</p>{% endif %}
+                                    {% if resultado.descripcion %}<p class="resultado-descripcion">{{ resultado.descripcion|truncatechars:120 }}</p>{% endif %}
+                                </div>
+                                <a class="boton resultado-enlace" href="{% url 'perfil' username=resultado.usuario.username %}" aria-label="Ver perfil de {{ resultado.usuario.username }}">Ver perfil</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if perfiles.has_other_pages %}
+                        <nav class="paginacion-busqueda" aria-label="Páginas de resultados">
+                            {% if perfiles.has_previous %}<a class="boton" href="?q={{ consulta|urlencode }}&amp;page={{ perfiles.previous_page_number }}">Anterior</a>{% endif %}
+                            <span>Página {{ perfiles.number }} de {{ perfiles.paginator.num_pages }}</span>
+                            {% if perfiles.has_next %}<a class="boton" href="?q={{ consulta|urlencode }}&amp;page={{ perfiles.next_page_number }}">Siguiente</a>{% endif %}
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="busqueda-vacia" role="status">
+                        <p>No encontramos perfiles para “{{ consulta }}”.</p>
+                        <p>Probá con otro nombre o escribí solo una parte del usuario.</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="busqueda-vacia"><p>Escribí un usuario o nombre en el buscador para ver los perfiles que coinciden.</p></div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
