@@ -222,8 +222,16 @@ __marimo__/
 
 # Migraciones
 
-InstarApp/migrations
+# Las migraciones se incluyen para crear la base en Supabase.
 
 # Media
 
 media/
+# Archivos privados y salidas de despliegue
+.env.*
+!.env.production.example
+*.sqlite3*
+staticfiles/
+netlify/public/
+data-export/
+backups/

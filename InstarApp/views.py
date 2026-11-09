@@ -156,7 +156,11 @@ def perfil(request, username, form_post=None):
         and request.user.pk == perfil_usuario.usuario_id
     )
 
-    form_post = PostForm() if es_dueno else None
+    if es_dueno:
+        if form_post is None:
+            form_post = PostForm()
+    else:
+        form_post = None
 
     contexto = {
         "usuario": usuario_actual,
@@ -289,6 +293,7 @@ def like_post(request, pk):
 
 
 @login_required(login_url='login')
+@require_POST
 def reportar_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.advertir()
@@ -389,6 +394,7 @@ def eliminar_comentario(request, pk):
 
 
 @login_required(login_url='login')
+@require_POST
 def reportar_comentario(request, pk):
     comentario = get_object_or_404(Comentario, pk=pk)
     comentario.advertir()
@@ -425,6 +431,7 @@ def eliminar_usuario(request, pk):
 
 
 @login_required(login_url='login')
+@require_POST
 def reportar_usuario(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
     usuario.advertir()
