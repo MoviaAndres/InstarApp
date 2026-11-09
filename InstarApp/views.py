@@ -380,8 +380,8 @@ def eliminar_usuario(request, pk):
         )
     
     if request.method == 'POST':
-        usuario_eliminar.delete()
-        messages.success(request, "Post eliminado")
+        usuario_eliminar.usuario.delete()
+        messages.success(request, "usuario eliminado")
         return redirect(
             "moderador"
         )

@@ -72,14 +72,14 @@
                 </form>
                 <form action="{% url 'reportar_usuario' perfil.pk %}" method="post">
                     {% csrf_token %}
-                    <button type="submit"> Reportar </button>
+                    <button class= "boton-advertir" type="submit"> Reportar </button>
                 </form>
                 <form action="{% url 'bloquear_perfil' perfil.pk %}" method="post">
                     {% csrf_token %}
                     {% if perfil.usuario in request.user.perfil.bloqueados.all %}
-                    <button type="submit"> Dejar de bloquear</button>
+                    <button class= "boton-advertir" type="submit"> Dejar de bloquear</button>
                     {% else %}
-                    <button type="submit"> Bloquear </button>
+                    <button class= "boton-advertir" type="submit"> Bloquear </button>
                     {% endif %}
                 </form>
             {% endif %}
@@ -114,6 +114,7 @@
 
         <div class="publicaciones">
             {% for post in publicaciones %}
+                {% if not request.user in post.usuario.bloqueados.all %}
                 <article class="publicacion">
 
                     {% if post.imagen %}
@@ -157,6 +158,9 @@
                     </form>
                 {% endif %}
                 </article>
+                {% else %}
+                <p>Este usuario todavía no tiene publicaciones.</p>
+                {% endif %}
             {% empty %}
                 <p>Este usuario todavía no tiene publicaciones.</p>
             {% endfor %}

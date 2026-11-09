@@ -85,7 +85,7 @@
 </div>
 {%endfor%}
 {% for usuario in usuarios %}
-    {% if comentario.usuario.foto_perfil %}
+    {% if usuario.foto_perfil %}
     <img
         style="
         width: 40px;
@@ -94,12 +94,12 @@
         object-fit: cover;
         background: #ddd;
         "
-        src="{{ comentario.usuario.foto_perfil.url }}"
+        src="{{ usuario.foto_perfil.url }}"
         alt="Foto de perfil"
         loading="lazy"
     >
     {% endif %}
-    <a href="{% url 'perfil' comentario.usuario%}">{{usuario}}</a>
+    <a href="{% url 'perfil' usuario%}">{{usuario}}</a>
 <div class= "contenedor-acciones">
     <form action="{% url 'eliminar_usuario' usuario.pk %}" method="post" class="d-inline">
         {% csrf_token %}

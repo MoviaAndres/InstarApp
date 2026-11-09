@@ -14,10 +14,10 @@
 </nav></header>
 <main class="contenedor">
 
-
-    <div>
-    {% if post.usuario.foto_perfil %}
-    <img
+    {% if not request.user in post.usuario.bloqueados.all %}
+        <div>
+        {% if post.usuario.foto_perfil %}
+        <img
         style="
         width: 130px;
         height: 130px;
@@ -28,64 +28,64 @@
         src="{{ post.usuario.foto_perfil.url }}"
         alt="Foto de perfil"
         loading="lazy"
-    >
-    {% endif %}
-        <a href="{% url 'perfil' post.usuario%}">{{post.usuario}}</a>
-    </div>
-{% if post.imagen %}
-    <img
+        >
+        {% endif %}
+            <a href="{% url 'perfil' post.usuario%}">{{post.usuario}}</a>
+        </div>
+        {% if post.imagen %}
+        <img
         src="{{ post.imagen.url }}"
         alt="Imagen de la publicación"
         loading="lazy"
-    >
-{% endif %}
+        >
+        {% endif %}
 
-    <p>{{ post.texto|linebreaksbr }}</p>
+        <p>{{ post.texto|linebreaksbr }}</p>
 
-    <div class= "contenedor-acciones">
-    <form action="{% url 'like_post' post.pk %}" method="post">
-    {% csrf_token %}
+        <div class= "contenedor-acciones">
+        <form action="{% url 'like_post' post.pk %}" method="post">
+        {% csrf_token %}
 
         {% if usuario in post.like.all %}
         <button type="submit">Quitar me gusta {{ post.like.count }}</button>
         {% else %}
         <button type="submit">Me gusta {{ post.like.count }}</button>
         {% endif %}
-    </form>
-    {% if not request.user == post.usuario.usuario %}
-    <form action="{% url 'reportar_post' post.pk %}" method="post">
-    {% csrf_token %}
+        </form>
+        {% if not request.user == post.usuario.usuario %}
+        <form action="{% url 'reportar_post' post.pk %}" method="post">
+        {% csrf_token %}
 
         <button class= "boton-advertir" type="submit"> Reportar </button>
-    </form>
-    {% else %}
-    <form action="{% url 'eliminar_post' post.pk %}" method="post">
-    {% csrf_token %}
+        </form>
+        {% else %}
+        <form action="{% url 'eliminar_post' post.pk %}" method="post">
+        {% csrf_token %}
 
         <button class= "boton-advertir" type="submit"> Eliminar </button>
-    </form>
-    {%endif%}
-    </div>
+        </form>
+        {%endif%}
+        </div>
 
-<section>
-    <h2>Comentar</h2>
+    <section>
+        <h2>Comentar</h2>
 
-    <form
+        <form
         method="post"
         action="{% url 'crear_comentario' post.id %}"
         enctype="multipart/form-data"
-    >
+        >
         {% csrf_token %}
         {{ form_post.as_p }}
 
         <button  type="submit">
             Publicar
         </button>
-    </form>
-</section>
+        </form>
+    </section>
 
-{% for comentario in comentarios %}
-    {% if not comentario.usuario in request.user.perfil.bloqueados.all%}
+    {% for comentario in comentarios %}
+    {% if not request.user in comentario.usuario.bloqueados.all %}
         {% if comentario.usuario.foto_perfil %}
         <img
             style="
@@ -128,7 +128,10 @@
         {% endif%}
         </div>
     {% endif %}
-{%endfor%}
+    {%endfor%}
+    {% else %}
+        <p> No tienes acceso al post </p>
+    {%endif%}
 </main>
 </body>
 </html>

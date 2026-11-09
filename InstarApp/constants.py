@@ -27,7 +27,10 @@ def banPalabra(texto):
     "pussy",
     "pajero",
     "conchudo",
-    "conchuda"
+    "conchuda",
+    "chupame",
+    "chupa me",
+    "chupa mie",
     ]
     ban = False
     for palabra in PALABRAS_BANEADAS:
@@ -45,6 +48,7 @@ def riesgoPalabra(texto):
         "muerto",
         "muer",
         "pete",
+        "chupa"
     ]
     ban = False
     for palabra in PALABRAS_RIESGOSAS:
